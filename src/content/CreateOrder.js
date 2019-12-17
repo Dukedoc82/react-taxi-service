@@ -1,6 +1,7 @@
 import React from 'react';
 import {makePostCall} from '../utils/ajaxRequest'
 import {getStrDateFromTime} from '../utils/DateTimeUtils'
+import properties from '../properties'
 import OrdersPage from './OrdersPage'
 import ReactDOM from 'react-dom';
 
@@ -43,7 +44,7 @@ class CreateOrder extends React.Component {
             addressTo: this.state.addressTo,
             appointmentDate: getStrDateFromTime(this.state.appointmentHour, this.state.appointmentMinute)
         }
-        makePostCall("http://localhost:8080/order/new", body, this.successCreate)
+        makePostCall(properties.backendServer + "/order/new", body, this.successCreate)
     }
 
     render() {

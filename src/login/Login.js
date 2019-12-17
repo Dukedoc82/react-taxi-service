@@ -3,6 +3,7 @@ import OrdersPage from "../content/OrdersPage"
 import {makePostCall} from '../utils/ajaxRequest'
 import RegistrationForm from './RegistrationForm'
 import ReactDOM from 'react-dom';
+import properties from '../properties'
 
 class Login extends React.Component{
 
@@ -29,12 +30,11 @@ class Login extends React.Component{
 
     mySubmitHandler = (event) => {
         event.preventDefault();
-        //alert("Username: " + this.state.username + "\n" + "Password: " + this.state.password);
         let body = {
             username: this.state.username,
             password: this.state.password
         }
-        makePostCall("http://localhost:8080/authenticate", body, this.successLogin, this.errorLogin, this.authError);
+        makePostCall(properties.backendServer + "/authenticate", body, this.successLogin, this.errorLogin, this.authError);
     }
 
     usernameChangeHandler = (event) => {

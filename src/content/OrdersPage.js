@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {makeGetCall} from "../utils/ajaxRequest";
 import CreateOrder from './CreateOrder'
 import '../index.css'
+import properties from '../properties'
 
 class OrdersPage extends React.Component {
 
@@ -21,7 +22,7 @@ class OrdersPage extends React.Component {
     }
 
     getOrders = () => {
-        makeGetCall("http://localhost:8080/order/", this.success);
+        makeGetCall(properties.backendServer + "/order/", this.success);
     }
 
     showCreateOrderForm = () => {
