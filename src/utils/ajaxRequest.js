@@ -1,18 +1,16 @@
+import properties from '../properties'
+
 export function makePostCall(url, body, success, error, authError) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true, );
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader("usertoken", localStorage.getItem("userToken"));
-    //xhr.setRequestHeader("Transfer-Encoding", "Access-Control-Expose-Headers");
-    xhr.send(JSON.stringify(body));
-    xhr.onreadystatechange = function() {
-        onReadyStateChange(xhr, success, error, authError);
-    }
+    makeBodyCall("POST", url, body, success, error, authError);
+}
+
+export function makePutCall(url, body, success, error, authError) {
+    makeBodyCall("PUT", url, body, success, error, authError);
 }
 
 export function makeGetCall(url, success, error, authError) {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
+    xhr.open("GET", properties.backendServer + url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader("usertoken", localStorage.getItem("userToken"));
     xhr.send();
@@ -27,11 +25,18 @@ function onReadyStateChange(xhr, success, error, authError) {
             // обработать ошибку
             if (xhr.status === 500) {
                 //alert(500);
-                error(JSON.parse(xhr.responseText));
+                if (error)
+                    error(JSON.parse(xhr.responseText));
+                else {
+                    defaultErrorHandler(xhr);
+                }
             }
             if (xhr.status === 401) {
+                if (authError)
                 //alert(401);
-                authError(xhr);
+                    authError(xhr);
+                else
+                    defaultErrorHandler(xhr);
             }
             //alert(xhr.status + ': ' + xhr.statusText + "\nreadyState: " + xhr.readyState); // пример вывода: 404: Not Found
         } else {
@@ -48,4 +53,20 @@ function onReadyStateChange(xhr, success, error, authError) {
         }
     }
 
+}
+
+function makeBodyCall(method, url, body, success, error, authError) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, properties.backendServer + url, true, );
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader("usertoken", localStorage.getItem("userToken"));
+    //xhr.setRequestHeader("Transfer-Encoding", "Access-Control-Expose-Headers");
+    xhr.send(JSON.stringify(body));
+    xhr.onreadystatechange = function() {
+        onReadyStateChange(xhr, success, error, authError);
+    }
+}
+
+function defaultErrorHandler(xhr) {
+    alert(xhr.status + ": " + xhr.responseText);
 }

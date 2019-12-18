@@ -5,3 +5,7 @@ export function getStrDateFromTime(hour, minute) {
 export function getDateFromISOString(isoDate) {
     return Date.parse(isoDate);
 }
+
+export function getFormattedDateFromISOString(isoDate) {
+    return new Date(isoDate).toLocaleString();
+}

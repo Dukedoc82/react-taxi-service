@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Login from './login/Login'
+import OrdersPage from './content/OrdersPage'
 
-const myfirstelement = <h1>Hello React!</h1>
-
-ReactDOM.render(<Login />, document.getElementById('root'));
-/*ReactDOM.render(<h2>Hello, Dmitry</h2>, document.getElementById('root2'));*/
+if (localStorage.getItem("userToken")) {
+    ReactDOM.render(<OrdersPage />, document.getElementById('root'));
+} else {
+    ReactDOM.render(<Login />, document.getElementById('root'));
+}
