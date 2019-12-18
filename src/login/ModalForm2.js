@@ -12,6 +12,8 @@ import RegistrationForm from "./RegistrationForm";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import OrdersPage from "../content/OrdersPage";
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 const customStyles = {
     content : {
@@ -32,63 +34,68 @@ function showRegisterForm(event) {
 const PaperDiv = (props) => {
     const classes = useStyles();
     return (
-        <div className={classes.paper}>
+        <Container component="main" maxWidth="xs">
             <Modal
                 isOpen={true}
                 style={customStyles}
             >
-            <Avatar className={classes.avatar}>
-                <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-                Sign in
-            </Typography>
-            <form className={classes.form} noValidate onSubmit={props.onSubmit}>
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="username"
-                    label="Username"
-                    name="username"
-                    autoComplete="username"
-                    autoFocus
-                    onChange={props.onUserNameChange}
-                />
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    onChange={props.onPasswordChange}
-                />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                >
-                    Sign In
-                </Button>
-                <Grid container>
-                    <Grid item xs>
-                    </Grid>
-                    <Grid item>
-                        <Link href="#" variant="body2" onClick={((e) => {showRegisterForm(e)})}>
-                            {"Don't have an account? Sign Up"}
-                        </Link>
-                    </Grid>
-                </Grid>
-            </form>
+                <CssBaseline />
+                <div className={classes.paper}>
+
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Sign in
+                    </Typography>
+                    <form className={classes.form} noValidate onSubmit={props.onSubmit}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
+                            autoFocus
+                            onChange={props.onUserNameChange}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            onChange={props.onPasswordChange}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                        >
+                            Sign In
+                        </Button>
+                        <Grid container>
+                            <Grid item xs>
+                            </Grid>
+                            <Grid item>
+                                <Link href="#" variant="body2" onClick={((e) => {showRegisterForm(e)})}>
+                                    {"Don't have an account? Sign Up"}
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </form>
+
+                </div>
             </Modal>
-        </div>
+        </Container>
     )
 
 }
