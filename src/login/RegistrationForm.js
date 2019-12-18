@@ -2,7 +2,6 @@ import React from 'react';
 import {makePostCall} from '../utils/ajaxRequest'
 import Login from './Login'
 import ReactDOM from 'react-dom';
-import properties from '../properties'
 
 class RegistrationForm extends React.Component {
 
@@ -55,7 +54,7 @@ class RegistrationForm extends React.Component {
             lastName: this.state.lastName,
             phoneNumber: this.state.phoneNumber
         }
-        makePostCall(properties.backendServer + "/register", body, this.onRegisterSuccess, this.onRegisterError)
+        makePostCall("/register", body, this.onRegisterSuccess, this.onRegisterError)
     }
 
     render() {
