@@ -1,4 +1,7 @@
+import React from "react";
 import properties from '../properties'
+import ReactDOM from 'react-dom';
+import Login from '../login/Login'
 
 export function makePostCall(url, body, success, error, authError) {
     makeBodyCall("POST", url, body, success, error, authError);
@@ -22,9 +25,7 @@ export function makeGetCall(url, success, error, authError) {
 function onReadyStateChange(xhr, success, error, authError) {
     if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status != 200) {
-            // обработать ошибку
             if (xhr.status === 500) {
-                //alert(500);
                 if (error)
                     error(JSON.parse(xhr.responseText));
                 else {
@@ -33,26 +34,21 @@ function onReadyStateChange(xhr, success, error, authError) {
             }
             if (xhr.status === 401) {
                 if (authError)
-                //alert(401);
                     authError(xhr);
                 else
                     defaultErrorHandler(xhr);
             }
-            //alert(xhr.status + ': ' + xhr.statusText + "\nreadyState: " + xhr.readyState); // пример вывода: 404: Not Found
         } else {
             if (xhr.status === 200) {
-                // вывести результат
                 if (xhr.getAllResponseHeaders().indexOf("usertoken") >= 0) {
                     if (xhr.getResponseHeader("usertoken") != null) {
                         localStorage.setItem("userToken", xhr.getResponseHeader("usertoken"));
                     }
                 }
-                success(JSON.parse(xhr.responseText));
-                //alert(xhr.responseText); // responseText -- текст ответа.
+                success(xhr && xhr.responseText ? JSON.parse(xhr.responseText) : null);
             }
         }
     }
-
 }
 
 function makeBodyCall(method, url, body, success, error, authError) {
@@ -60,7 +56,6 @@ function makeBodyCall(method, url, body, success, error, authError) {
     xhr.open(method, properties.backendServer + url, true, );
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader("usertoken", localStorage.getItem("userToken"));
-    //xhr.setRequestHeader("Transfer-Encoding", "Access-Control-Expose-Headers");
     xhr.send(JSON.stringify(body));
     xhr.onreadystatechange = function() {
         onReadyStateChange(xhr, success, error, authError);
@@ -68,5 +63,10 @@ function makeBodyCall(method, url, body, success, error, authError) {
 }
 
 function defaultErrorHandler(xhr) {
-    alert(xhr.status + ": " + xhr.responseText);
+    if (xhr.status === 401) {
+        localStorage.removeItem("userToken");
+        ReactDOM.render(<Login/>, document.getElementById('root'));
+    } else {
+        alert(xhr.status + ": " + xhr.responseText);
+    }
 }

@@ -39,21 +39,22 @@ class OrdersPage extends React.Component {
     }
 
     getOrderActions = (status, orderId) => {
-        console.log({status: status, orderId: orderId});
-        /*if (status.titleKey === 'tp.status.cancelled' || status.titleKey === 'tp.status.completed') {
+        if (status.titleKey === 'tp.status.cancelled' || status.titleKey === 'tp.status.completed') {
             return ''
         } else {
             return (
-                <a href='#' onClick={this.cancelOrder(orderId)}>Cancel</a>
+                (<a href='#' orderid={orderId} onClick={((e) => this.cancelOrder(e, orderId))}>Cancel</a>)
             )
-        }*/
-        return 'Cancel';
+        }
     }
 
     render() {
         return (
             <div>
                 <h1>React Dynamic Table</h1>
+                <div>
+                <logout-link/>
+                </div>
                 <table id='students'>
                     <tbody>
                     <tr>
@@ -77,7 +78,7 @@ class OrdersPage extends React.Component {
                                 <td>{order.addressTo}</td>
                                 <td>{this.getDriverFullName(driver)}</td>
                                 <td>{status.titleKey}</td>
-                                <td><a href='#' orderid={order.id} onClick={((e) => this.cancelOrder(e, order.id))}>Cancel</a></td>
+                                <td>{this.getOrderActions(status, order.id)}</td>
                             </tr>
                         )
                     })
