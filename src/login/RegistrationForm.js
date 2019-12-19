@@ -17,7 +17,9 @@ class RegistrationForm extends React.Component {
     }
 
     usernameChangeHandler = (event) => {
-        this.state.username = event.target.value;
+        console.log(event.target.value);
+        this.setState({username: event.target.value})
+        //this.state.username = event.target.value;
     }
 
     passwordChangeHandler = (event) => {

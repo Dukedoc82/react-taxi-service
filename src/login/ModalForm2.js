@@ -8,12 +8,15 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {useStyles} from '../styles'
 import Modal from "react-modal";
-import RegistrationForm from "./RegistrationForm";
+//import RegistrationForm from "./RegistrationForm";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import OrdersPage from "../content/OrdersPage";
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Registration from './Registration'
+import RegistrationForm from './RegistrationForm'
+//import RegistrationForm2 from "./RegistrationForm2";
 
 const customStyles = {
     content : {
@@ -28,7 +31,7 @@ const customStyles = {
 
 function showRegisterForm(event) {
     event.preventDefault();
-    ReactDOM.render(<RegistrationForm/>, document.getElementById('root'));
+    ReactDOM.render((<RegistrationForm/>), document.getElementById('root'));
 }
 
 const PaperDiv = (props) => {
