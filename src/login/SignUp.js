@@ -7,14 +7,12 @@ import PropTypes from 'prop-types';
 import { green } from '@material-ui/core/colors';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import ReactPhoneInput from "react-phone-input-mui";
 import validateIsNotEmpty from "../utils/ValidationUtils";
-import {Snackbar} from "@material-ui/core";
 import SnackbarContent from "@material-ui/core/SnackbarContent";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -23,6 +21,10 @@ import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
 import WarningIcon from '@material-ui/icons/Warning';
 import clsx from 'clsx';
+import AlertDialog from "../components/AlertDialog";
+import ReactDOM from 'react-dom';
+import {makePostCall} from "../utils/ajaxRequest";
+import SignIn from "./SignIn";
 
 const variantIcon = {
     success: CheckCircleIcon,
@@ -30,19 +32,6 @@ const variantIcon = {
     error: ErrorIcon,
     info: InfoIcon,
 };
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
 
 function MySnackbarContentWrapper(props) {
     const classes = useStyles();
@@ -69,8 +58,6 @@ function MySnackbarContentWrapper(props) {
     );
 }
 
-
-
 MySnackbarContentWrapper.propTypes = {
     className: PropTypes.string,
     message: PropTypes.string,
@@ -80,7 +67,7 @@ MySnackbarContentWrapper.propTypes = {
 
 const useStyles = makeStyles(theme => ({
     paper: {
-        marginTop: theme.spacing(8),
+        marginTop: theme.spacing(1),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -133,6 +120,14 @@ export default function SignUp() {
     const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState('');
 
     const [successMessageOpen, setSuccessMessageOpen] = useState(false);
+    const [alertDialogTitle, setAlertDialogTitle] = useState('Success');
+    const [alertDialogMessage, setAlertDialogMessage] = useState('');
+
+    const goToLoginPage = (event) => {
+        if (event)
+            event.preventDefault();
+        ReactDOM.render(<SignIn/>, document.getElementById('root'));
+    }
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -144,13 +139,23 @@ export default function SignUp() {
                 lastName: lastName,
                 phoneNumber: phoneNumber
             }
-            setSuccessMessageOpen(true);
-           // makePostCall("/register", body)
+           makePostCall('/register', body, onSuccessRegister, onFailRegister);
         }
     }
 
     const onSuccessRegister = (response) => {
+        setAlertDialogTitle('Success');
+        setAlertDialogMessage('User ' + username + ' successfully registered.');
+        setSuccessMessageOpen(true);
+    }
 
+    const onFailRegister = (response) => {
+        setAlertDialogTitle('Error');
+        let msg = response.message;
+        if (msg.includes('ConstraintViolationException'))
+            msg = 'User with such email address or phone number already registered!';
+        setAlertDialogMessage(msg);
+        setSuccessMessageOpen(true);
     }
 
     const onUsernameChange = (event) => {
@@ -237,6 +242,8 @@ export default function SignUp() {
         }
 
         setSuccessMessageOpen(false);
+        if (alertDialogTitle === 'Success')
+            goToLoginPage();
     };
 
     const validatePhoneNumber = (value) => {
@@ -245,15 +252,11 @@ export default function SignUp() {
             .split(' ').join('')
             .split('-').join('')
             .replace('+', '');
-        console.log(phoneNum);
         if (validateIsNotEmpty(phoneNumber, phoneNumberOKCallback, phoneNumberIsEmptyCallback)) {
-            console.log(phoneNum.length);
             if (phoneNum.length != 11) {
-                console.log('wrong number')
                 setPhoneNumberErrorMessage('Phone number must contain 10 digits after country code!');
                 return false;
             } else {
-                console.log('correct number');
                 setPhoneNumberErrorMessage('');
                 return true;
             }
@@ -372,33 +375,18 @@ export default function SignUp() {
                     >
                         Sign Up
                     </Button>
-                    <Snackbar open={successMessageOpen}
-                              anchorOrigin={{
-                                  vertical: 'bottom',
-                                  horizontal: 'left',
-                              }}
-                              autoHideDuration={6000}
-                              onClose={handleSnackBarClose}
-                              >
-                        <MySnackbarContentWrapper
-                            onClose={handleSnackBarClose}
-                            variant="success"
-                            message="This is a success message!"
-                        />
-                    </Snackbar>
+                    <AlertDialog open={successMessageOpen} message={alertDialogMessage}
+                                 handleClose={handleSnackBarClose} title={alertDialogTitle}/>
 
                     <Grid container justify="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2">
+                            <Link href="#" variant="body2" onClick={event => goToLoginPage(event)}>
                                 Already have an account? Sign in
                             </Link>
                         </Grid>
                     </Grid>
                 </form>
             </div>
-            <Box mt={5}>
-                <Copyright />
-            </Box>
         </Container>
     );
 }
