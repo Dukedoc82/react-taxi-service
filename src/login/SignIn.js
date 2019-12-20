@@ -12,6 +12,7 @@ import Container from '@material-ui/core/Container';
 import ReactDOM from 'react-dom';
 import SignUp from './SignUp';
 import {makePostCall} from "../utils/ajaxRequest";
+import AppPage from "../content/AppPage";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -35,7 +36,8 @@ const useStyles = makeStyles(theme => ({
 
 const openSignUp = (event) => {
     event.preventDefault();
-    ReactDOM.render(<SignUp/>, document.getElementById('root'));
+    ReactDOM.render(<AppPage/>, document.getElementById('root'));
+    //ReactDOM.render(<SignUp/>, document.getElementById('root'));
 }
 
 export default function SignIn() {

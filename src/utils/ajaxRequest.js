@@ -1,7 +1,7 @@
 import React from "react";
 import properties from '../properties'
 import ReactDOM from 'react-dom';
-import Login from '../login/Login'
+import SignIn from "../login/SignIn";
 
 export function makePostCall(url, body, success, error, authError) {
     makeBodyCall("POST", url, body, success, error, authError);
@@ -65,7 +65,7 @@ function makeBodyCall(method, url, body, success, error, authError) {
 function defaultErrorHandler(xhr) {
     if (xhr.status === 401) {
         localStorage.removeItem("userToken");
-        ReactDOM.render(<Login/>, document.getElementById('root'));
+        ReactDOM.render(<SignIn/>, document.getElementById('root'));
     } else {
         alert(xhr.status + ": " + xhr.responseText);
     }

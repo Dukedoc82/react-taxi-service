@@ -4,7 +4,6 @@ import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import CreateOrder from './CreateOrder'
 import '../index.css'
 import {getFormattedDateFromISOString} from '../utils/DateTimeUtils'
-import Logout from '../login/Logout'
 
 class OrdersPage extends React.Component {
 
