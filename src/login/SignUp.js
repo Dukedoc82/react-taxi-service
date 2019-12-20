@@ -161,21 +161,25 @@ export default function SignUp() {
     const onUsernameChange = (event) => {
         event.preventDefault();
         setUsername(event.target.value);
+        setUserNameErrorMessage(!!event.target.value ? '' : userNameErrorMessage);
     }
 
     const onFirstNameChange = (event) => {
         event.preventDefault();
         setFirstName(event.target.value);
+        setFirstNameErrorMessage(!!event.target.value ? '' : firstNameErrorMessage);
     }
 
     const onLastNameChange = (event) => {
         event.preventDefault();
         setLastName(event.target.value);
+        setLastNameErrorMessage(!!event.target.value ? '' : lastNameErrorMessage);
     }
 
     const onPasswordChange = (event) => {
         event.preventDefault();
         setPassword(event.target.value);
+        setPasswordErrorMessage(!!event.target.value ? '' : passwordErrorMessage);
     }
 
     const onPnoneNumberChange = (value) => {
@@ -183,6 +187,7 @@ export default function SignUp() {
             ? value.replace('8', '+7')
             : value;
         setPhoneNumber(phoneNum);
+        setPhoneNumberErrorMessage(!!value ? '' : phoneNumberErrorMessage);
     }
 
     const userNameIsEmptyCallback = () => {
@@ -356,6 +361,7 @@ export default function SignUp() {
                                 onChange={onPnoneNumberChange}
                                 component={TextField}
                                 value={phoneNumber}
+                                onBlur={(e)=> onPnoneNumberChange(e.target.value)}
                                 inputExtraProps={{
                                     required: true,
                                     name: 'phone',
