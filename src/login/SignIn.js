@@ -3,30 +3,15 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import ReactDOM from 'react-dom';
 import SignUp from './SignUp';
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import {makePostCall} from "../utils/ajaxRequest";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -56,8 +41,39 @@ const openSignUp = (event) => {
 export default function SignIn() {
     const classes = useStyles();
     const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
+    const onPasswordChange = (event) => {
+        event.preventDefault();
+        setPassword(event.target.value);
+    }
 
+    const onUserNameChange = (event) => {
+        event.preventDefault();
+        setUsername(event.target.value);
+    }
+
+    const onSuccessAuth = (response) => {
+        console.log(response);
+    }
+
+    const onError = (response) => {
+        console.log(response);
+    }
+
+    const onAuthError = (response) => {
+        console.log(response);
+    }
+
+    const onSubmit = (event) => {
+        event.preventDefault();
+        let body = {
+            username: username,
+            password: password
+        }
+        makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError);
+
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -69,7 +85,7 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <form className={classes.form} noValidate>
+                <form className={classes.form} noValidate onSubmit={onSubmit}>
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -80,6 +96,8 @@ export default function SignIn() {
                         name="email"
                         autoComplete="email"
                         autoFocus
+                        onChange={onUserNameChange}
+                        value={username}
                     />
                     <TextField
                         variant="outlined"
@@ -91,10 +109,8 @@ export default function SignIn() {
                         type="password"
                         id="password"
                         autoComplete="current-password"
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
+                        onChange={onPasswordChange}
+                        value={password}
                     />
                     <Button
                         type="submit"
@@ -107,9 +123,6 @@ export default function SignIn() {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
                         </Grid>
                         <Grid item>
                             <Link href="#" variant="body2" onClick={openSignUp}>
@@ -119,9 +132,6 @@ export default function SignIn() {
                     </Grid>
                 </form>
             </div>
-            <Box mt={8}>
-                <Copyright />
-            </Box>
         </Container>
     );
 }
