@@ -1,5 +1,4 @@
-
-export default function validateIsNotEmpty(value, successCallback, failCallback) {
+export function validateIsNotEmpty(value, successCallback, failCallback) {
     let result = value && value.trim() !== '';
     if (!result) {
         if (failCallback)

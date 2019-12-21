@@ -45,7 +45,8 @@ function onReadyStateChange(xhr, success, error, authError) {
                         localStorage.setItem("userToken", xhr.getResponseHeader("usertoken"));
                     }
                 }
-                success(xhr && xhr.responseText ? JSON.parse(xhr.responseText) : null);
+                if (success)
+                    success(xhr && xhr.responseText ? JSON.parse(xhr.responseText) : null);
             }
         }
     }

@@ -36,8 +36,8 @@ const useStyles = makeStyles(theme => ({
 
 const openSignUp = (event) => {
     event.preventDefault();
-    ReactDOM.render(<AppPage/>, document.getElementById('root'));
-    //ReactDOM.render(<SignUp/>, document.getElementById('root'));
+    //ReactDOM.render(<AppPage/>, document.getElementById('root'));
+    ReactDOM.render(<SignUp/>, document.getElementById('root'));
 }
 
 export default function SignIn() {
@@ -56,6 +56,7 @@ export default function SignIn() {
     }
 
     const onSuccessAuth = (response) => {
+        ReactDOM.render(<AppPage/>, document.getElementById('root'));
         console.log(response);
     }
 

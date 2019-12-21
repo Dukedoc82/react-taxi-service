@@ -3,7 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import PropTypes from 'prop-types';
 import { green } from '@material-ui/core/colors';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
@@ -12,58 +11,11 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import ReactPhoneInput from "react-phone-input-mui";
-import validateIsNotEmpty from "../utils/ValidationUtils";
-import SnackbarContent from "@material-ui/core/SnackbarContent";
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import WarningIcon from '@material-ui/icons/Warning';
-import clsx from 'clsx';
+import {validateIsNotEmpty} from "../utils/ValidationUtils";
 import AlertDialog from "../components/AlertDialog";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import SignIn from "./SignIn";
-
-const variantIcon = {
-    success: CheckCircleIcon,
-    warning: WarningIcon,
-    error: ErrorIcon,
-    info: InfoIcon,
-};
-
-function MySnackbarContentWrapper(props) {
-    const classes = useStyles();
-    const { className, message, onClose, variant, ...other } = props;
-    const Icon = variantIcon[variant];
-
-    return (
-        <SnackbarContent
-            className={clsx(classes[variant], className)}
-            aria-describedby="client-snackbar"
-            message={
-                <span id="client-snackbar" className={classes.message}>
-          <Icon className={clsx(classes.icon, classes.iconVariant)} />
-                    {message}
-        </span>
-            }
-            action={[
-                <IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
-                    <CloseIcon className={classes.icon} />
-                </IconButton>,
-            ]}
-            {...other}
-        />
-    );
-}
-
-MySnackbarContentWrapper.propTypes = {
-    className: PropTypes.string,
-    message: PropTypes.string,
-    onClose: PropTypes.func,
-    variant: PropTypes.oneOf(['success']).isRequired,
-};
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -126,7 +78,11 @@ export default function SignUp() {
     const goToLoginPage = (event) => {
         if (event)
             event.preventDefault();
-        ReactDOM.render(<SignIn/>, document.getElementById('root'));
+        localStorage.removeItem('userToken');
+        if (window.location.search === '?driver')
+            window.location.href = window.location.origin;
+        else
+            ReactDOM.render(<SignIn/>, document.getElementById('root'));
     }
 
     const onSubmit = (event) => {
@@ -139,7 +95,10 @@ export default function SignUp() {
                 lastName: lastName,
                 phoneNumber: phoneNumber
             }
-           makePostCall('/register', body, onSuccessRegister, onFailRegister);
+            let url = window.location.search === '?driver' ?
+                '/registerAsADriver' :
+                '/register';
+            makePostCall(url, body, onSuccessRegister, onFailRegister);
         }
     }
 
@@ -216,18 +175,15 @@ export default function SignUp() {
 
     const validatePassword = (value) => {
         let msg = '';
-        if (!validateIsNotEmpty(value)) {
-            msg = 'Password can not be empty!';
-        } else if (value.length < 8) {
-            msg = 'Password must be at least 8 characters length!';
-        } else if(!/\d/.test(value)) {
-            msg = 'Password must contain at least 1 digit!'
-        } else if(!/[a-z]/.test(value)) {
-            msg = 'Password must contain at least 1 latin symbol in lower case!';
-        } else if(!/[A-Z]/.test(value)) {
-            msg = 'Password must contain at least 1 latin symbol in upper case!';
-        } else if(/[^0-9a-zA-Z/!@#$%^&*()\-+=\]\[_]/.test(value)) {
-            msg = 'Password allows latin symbols and !@#$%^&*()\\-+=][_ symbols only!';
+        const errorMsg = 'Password must be at least 8 characters length, contain at least 1 digit, 1 symbol in lower ' +
+            'case, one symbol in upper case and allows latin symbols, digits and !@#$%^&*()\\-+=][_ symbols only.!';
+        if (!validateIsNotEmpty(value)
+                || value.length < 8
+                || !/\d/.test(value)
+                || !/[a-z]/.test(value)
+                || !/[A-Z]/.test(value)
+                || /[^0-9a-zA-Z/!@#$%^&*()\-+=\]\[_]/.test(value)) {
+            msg = errorMsg;
         }
         setPasswordErrorMessage(msg);
         return !msg;

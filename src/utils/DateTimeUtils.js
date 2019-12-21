@@ -7,5 +7,19 @@ export function getDateFromISOString(isoDate) {
 }
 
 export function getFormattedDateFromISOString(isoDate) {
-    return new Date(isoDate).toLocaleString();
+    return formatDate(new Date(isoDate));
+}
+
+function formatDate(date) {
+    let dd = getNumberWithLeadingZero(date.getDate());
+    let MM = getNumberWithLeadingZero(date.getMonth() + 1);
+    let yy = getNumberWithLeadingZero(date.getFullYear() % 100);
+    let HH = getNumberWithLeadingZero(date.getHours());
+    let mm = getNumberWithLeadingZero(date.getMinutes());
+
+    return dd + '.' + MM + '.' + yy + ' ' + HH + ':' + mm;
+}
+
+function getNumberWithLeadingZero(num) {
+    return num < 10 ? '0' + num : num;
 }
