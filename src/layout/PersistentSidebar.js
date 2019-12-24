@@ -18,8 +18,7 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi'
 import {makeGetCall} from "../utils/ajaxRequest";
 import SignIn from "../login/SignIn";
 import OrdersTable from "../content/OrdersTable"
-import DriverOrdersTable from "../content/DriverOrdersTable";
-import DriverOrdersTableCustomized from "../content/DriverOrdersTableCustomized";
+import DriverTabPanel from "../components/DriverTabPanel";
 
 const drawerWidth = 240;
 
@@ -99,18 +98,16 @@ export default function PersistentDrawerLeft(props) {
 
     const handleClick = (index) => {
         if (index === 'Driver Dashboard') {
-            ReactDOM.render(<DriverOrdersTableCustomized/>, document.getElementById('mainContent'));
+            ReactDOM.render(<DriverTabPanel />, document.getElementById('mainContent'));
         } else if (index === 'My Orders') {
             ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
         }
-        console.log(index);
     }
 
     let menuTitles = ['My Orders'];
     let userData = JSON.parse(localStorage.getItem('userData'));
     if (userData.uri.indexOf("/driver/") !== -1)
         menuTitles.push('Driver Dashboard');
-    console.log(userData);
 
     return (
         <div className={classes.root}>

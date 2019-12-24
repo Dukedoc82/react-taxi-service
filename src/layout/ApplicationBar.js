@@ -27,7 +27,6 @@ export default function ApplicationBar() {
 
     const onMenuClicked = (event) => {
         event.preventDefault();
-        console.log(verticalMenuOpened);
         setVerticalMenuOpened(!verticalMenuOpened);
     }
 

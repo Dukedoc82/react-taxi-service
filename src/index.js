@@ -4,7 +4,6 @@ import SignIn from './login/SignIn'
 import AppPage from "./content/AppPage";
 import SignUp from "./login/SignUp";
 
-//console.log(window.location);
 const docRoot = document.getElementById('root');
 if (window.location.search === '?driver')
     ReactDOM.render(<SignUp/>, docRoot);

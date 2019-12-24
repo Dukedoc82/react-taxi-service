@@ -56,7 +56,6 @@ export default function VerticalTabs(props) {
         //props.handleTabChange(event, newValue);
     };
 
-    console.log(props);
     return (
         <div className={classes.root} hidden={props.verticalMenuOpened}>
             <Tabs

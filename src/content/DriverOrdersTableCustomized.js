@@ -76,7 +76,7 @@ function EnhancedTableHead(props) {
                 <TableCell padding="checkbox">
                     <Checkbox
                         indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={numSelected === rowCount}
+                        checked={numSelected === rowCount && rowCount > 0}
                         onChange={onSelectAllClick}
                         inputProps={{ 'aria-label': 'select all desserts' }}
                     />
@@ -151,6 +151,7 @@ const useToolbarStyles = makeStyles(theme => ({
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
+    console.log(numSelected);
 
     return (
         <Toolbar
@@ -237,14 +238,20 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function DriverOrdersTableCustomized() {
+export default function DriverOrdersTableCustomized(props) {
+    console.log(props);
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('addressFrom');
-    const [selected, setSelected] = React.useState([]);
+    const [selected, setSelected] = React.useState(props.selected);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [dataRows, setDataRows] = React.useState([]);
+    const [dataRows, setDataRows] = React.useState(props.orders);
+    const [performedAction, setPerformedAction] = React.useState('');
+
+    const getOrdersUrl = props.statuses === 'opened' ?
+        '/driver/openedOrders' : props.statuses === 'assigned' ?
+            '/driver/assignedOrders' : props.statuses ==='closed' ? '/driver/completedOrders' : 'null';
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -252,28 +259,39 @@ export default function DriverOrdersTableCustomized() {
         setOrderBy(property);
     };
 
+    const updateSelected = (selected) => {
+        setSelected(selected);
+        if (props.selectedChangeHandler)
+            props.selectedChangeHandler(selected);
+    }
+
     const onOpenedOrdersLoaded = (response) => {
-        setDataRows(
-        response.map((row) => {
+        const rows = response.map((row) => {
 
             return createData(row.order.id, row.order.addressFrom, row.order.addressTo, getFormattedDateFromISOString(row.order.appointmentDate),
                 getUserFullName(row.order.client), getStatusCaption(row.status.titleKey));
-        })
-        );
+        });
+        setDataRows(rows);
+        console.log(performedAction);
+        if (props.changeOrdersHandler) {
+            props.changeOrdersHandler(rows, performedAction);
+        }
+        setPerformedAction('');
     }
 
     useEffect(() => {
-        makeGetCall("/driver/openedOrders", onOpenedOrdersLoaded);
+        if (!props.orders)
+            makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
 
     }, []);
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
             const newSelecteds = dataRows.map(n => n.addressFrom);
-            setSelected(newSelecteds);
+            updateSelected(newSelecteds);
             return;
         }
-        setSelected([]);
+        updateSelected([]);
     };
 
     const handleClick = (event, name) => {
@@ -293,7 +311,7 @@ export default function DriverOrdersTableCustomized() {
             );
         }
 
-        setSelected(newSelected);
+        updateSelected(newSelected);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -309,18 +327,21 @@ export default function DriverOrdersTableCustomized() {
 
 
     const getEmptyRows = (rows) => {
-        return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+        return rows ?
+            rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage) :
+            0;
     }
 
     const assignOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setPerformedAction('assign');
         makePutCall('/driver/assignOrderToMe/' + orderId, null, refreshOpenedOrders);
         console.log(orderId);
     }
 
     const refreshOpenedOrders = (response) => {
-        makeGetCall("/driver/openedOrders", onOpenedOrdersLoaded);
+        makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
     }
 
     return (
@@ -341,15 +362,14 @@ export default function DriverOrdersTableCustomized() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={dataRows.length}
+                            rowCount={dataRows ? dataRows.length : 0}
                         />
                         <TableBody>
-                            {stableSort(dataRows, getSorting(order, orderBy))
+                            {stableSort(dataRows || [], getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row.addressFrom);
                                     const labelId = `enhanced-table-checkbox-${index}`;
-                                    console.log(row);
 
                                     return (
                                         <TableRow
@@ -401,7 +421,7 @@ export default function DriverOrdersTableCustomized() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={dataRows.length}
+                    count={(dataRows || []).length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
