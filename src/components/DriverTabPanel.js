@@ -65,6 +65,7 @@ export default function DriverTabPanel() {
     const changeOpenedOrderHandler = (orders, action) => {
         console.log(action);
         setOpenedOrders(orders);
+        setOpenedSelected([]);
         if (action === 'assign')
             setAssignedOrders(null);
     }
@@ -75,6 +76,7 @@ export default function DriverTabPanel() {
 
     const changeAssignedOrderHandler = (orders) => {
         setAssignedOrders(orders);
+        setAssignedSelected([]);
     }
 
     const changeAssignedSelectedHandler = (selected) => {
@@ -82,8 +84,10 @@ export default function DriverTabPanel() {
     }
 
     const changeCompletedOrderHandler = (orders) => {
-        if (orders)
+        if (orders) {
             setCompletedOrders(orders);
+            setCompletedSelected([]);
+        }
     }
 
     const changeCompletedSelectedHandler = (selected) => {
@@ -108,9 +112,10 @@ export default function DriverTabPanel() {
                                              selected={assignedSelected} selectedChangeHandler={changeAssignedSelectedHandler}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <DriverOrdersTableCustomized statuses={"closed"} orders={completedOrders} changeOrdersHandler={changeCompletedOrderHandler()}
+                <DriverOrdersTableCustomized statuses={"closed"} orders={completedOrders} changeOrdersHandler={changeCompletedOrderHandler}
                                              selected={completedSelected} selectedChangeHandler={changeCompletedSelectedHandler}/>
         </TabPanel>
         </div>
     );
+
 }

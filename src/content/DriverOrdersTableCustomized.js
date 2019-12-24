@@ -151,7 +151,6 @@ const useToolbarStyles = makeStyles(theme => ({
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
-    console.log(numSelected);
 
     return (
         <Toolbar
@@ -272,7 +271,6 @@ export default function DriverOrdersTableCustomized(props) {
                 getUserFullName(row.order.client), getStatusCaption(row.status.titleKey));
         });
         setDataRows(rows);
-        console.log(performedAction);
         if (props.changeOrdersHandler) {
             props.changeOrdersHandler(rows, performedAction);
         }
@@ -280,9 +278,7 @@ export default function DriverOrdersTableCustomized(props) {
     }
 
     useEffect(() => {
-        if (!props.orders)
-            makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
-
+        makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
     }, []);
 
     const handleSelectAllClick = event => {
