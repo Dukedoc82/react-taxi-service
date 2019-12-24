@@ -18,11 +18,17 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import {makeGetCall} from "../utils/ajaxRequest";
+import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import {getStatusCaption, getUserFullName} from "../utils/DataUtils";
+import ContactSupportOutlined from '@material-ui/icons/ContactSupportOutlined'
+import Avatar from '@material-ui/core/Avatar';
+import {lightBlue, green} from '@material-ui/core/colors'
+import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
+import CheckOutlined from '@material-ui/icons/CheckOutlined';
+import Fab from '@material-ui/core/Fab';
 
-function createData(addressFrom, addressTo, appointmentTime, client, status) {
-    return { addressFrom, addressTo, appointmentTime, client, status };
+function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
+    return { id, addressFrom, addressTo, appointmentTime, client, status };
 }
 
 function desc(a, b, orderBy) {
@@ -53,8 +59,9 @@ const headCells = [
     { id: 'addressFrom', numeric: false, disablePadding: true, label: 'Address From', sortable: true},
     { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
     { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
-    { id: 'client', numeric: true, disablePadding: false, label: 'Client', sortable: true },
-    { id: 'status', numeric: true, disablePadding: false, label: 'Status' },
+    { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' },
+    { id: 'status', numeric: true, disablePadding: false, label: 'Status', align: 'center' },
+    { id: 'actions', numeric: false, disablePadding: true, label: 'Actions', align: 'center'}
 ];
 
 function EnhancedTableHead(props) {
@@ -77,7 +84,7 @@ function EnhancedTableHead(props) {
                 {headCells.map(headCell => (
                     <TableCell  className={classes.tableHeader}
                         key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
+                        align={headCell.align ? headCell.align : (headCell.numeric ? 'right' : 'left')}
                         padding={headCell.disablePadding ? 'none' : 'default'}
                         sortDirection={orderBy === headCell.id ? order : false}
                     >
@@ -120,7 +127,7 @@ EnhancedTableHead.propTypes = {
 const useToolbarStyles = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(1),
+        paddingRight: theme.spacing(1)
     },
     highlight:
         theme.palette.type === 'light'
@@ -206,6 +213,27 @@ const useStyles = makeStyles(theme => ({
     },
     tableHeader: {
         'font-weight': 'bold'
+    },
+    avatarBlue: {
+        'backgroundColor': lightBlue[600]
+    },
+    avatarGreen: {
+        'backgroundColor': green[600]
+    },
+    tableCell: {
+        padding: '1em'
+    },
+    statusDiv: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        ...theme.mixins.toolbar,
+        justifyContent: 'center',
+        'min-height': '0px !important'
+    },
+    assignFab: {
+        backgroundColor: green[600],
+        color: '#fff'
     }
 }));
 
@@ -228,7 +256,7 @@ export default function DriverOrdersTableCustomized() {
         setDataRows(
         response.map((row) => {
 
-            return createData(row.order.addressFrom, row.order.addressTo, row.order.appointmentDate,
+            return createData(row.order.id, row.order.addressFrom, row.order.addressTo, getFormattedDateFromISOString(row.order.appointmentDate),
                 getUserFullName(row.order.client), getStatusCaption(row.status.titleKey));
         })
         );
@@ -284,6 +312,17 @@ export default function DriverOrdersTableCustomized() {
         return rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     }
 
+    const assignOrder = (event, orderId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        makePutCall('/driver/assignOrderToMe/' + orderId, null, refreshOpenedOrders);
+        console.log(orderId);
+    }
+
+    const refreshOpenedOrders = (response) => {
+        makeGetCall("/driver/openedOrders", onOpenedOrdersLoaded);
+    }
+
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
@@ -322,19 +361,32 @@ export default function DriverOrdersTableCustomized() {
                                             key={row.addressFrom}
                                             selected={isItemSelected}
                                         >
-                                            <TableCell padding="checkbox">
+                                            <TableCell padding="checkbox" className={classes.tableCell}>
                                                 <Checkbox
                                                     checked={isItemSelected}
                                                     inputProps={{ 'aria-labelledby': labelId }}
                                                 />
                                             </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                            <TableCell component="th" id={labelId} scope="row" padding="none" className={classes.tableCell}>
                                                 {row.addressFrom}
                                             </TableCell>
-                                            <TableCell align="left">{row.addressTo}</TableCell>
-                                            <TableCell align="right">{row.appointmentTime}</TableCell>
-                                            <TableCell align="right">{row.client}</TableCell>
-                                            <TableCell align="right">{row.status}</TableCell>
+                                            <TableCell align="left" className={classes.tableCell}>{row.addressTo}</TableCell>
+                                            <TableCell align="right" className={classes.tableCell}>{row.appointmentTime}</TableCell>
+                                            <TableCell align="center" className={classes.tableCell}>{row.client}</TableCell>
+                                            <TableCell align="center" className={classes.tableCell}>
+                                                <Tooltip title="Opened">
+                                                    <div className={classes.statusDiv}>
+                                                        <Avatar className={classes.avatarBlue}><ContactSupportOutlined/></Avatar>
+                                                    </div>
+                                                </Tooltip>
+                                            </TableCell>
+                                            <TableCell align="center" className={classes.tableCell}>
+                                                <Tooltip title="Assign To Me">
+                                                    <div className={classes.statusDiv}>
+                                                        <Fab size='small' className={classes.assignFab} onClick={(e) => assignOrder(e, row.id)}><CheckOutlined/></Fab>
+                                                    </div>
+                                                </Tooltip>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
