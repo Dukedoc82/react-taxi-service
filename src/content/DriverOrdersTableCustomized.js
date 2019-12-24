@@ -22,9 +22,11 @@ import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import {getStatusCaption, getUserFullName} from "../utils/DataUtils";
 import ContactSupportOutlined from '@material-ui/icons/ContactSupportOutlined'
 import Avatar from '@material-ui/core/Avatar';
-import {lightBlue, green} from '@material-ui/core/colors'
+import {lightBlue, green, red} from '@material-ui/core/colors'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import CheckOutlined from '@material-ui/icons/CheckOutlined';
+import ClearOutlined from '@material-ui/icons/ClearOutlined'
+import CancelOutlined from '@material-ui/icons/CancelOutlined'
 import Fab from '@material-ui/core/Fab';
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
@@ -60,7 +62,6 @@ const headCells = [
     { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
     { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
     { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' },
-    { id: 'status', numeric: true, disablePadding: false, label: 'Status', align: 'center' },
     { id: 'actions', numeric: false, disablePadding: true, label: 'Actions', align: 'center'}
 ];
 
@@ -145,6 +146,12 @@ const useToolbarStyles = makeStyles(theme => ({
     tableHeader: {
         'font-weight': 'bold',
         'border-bottom': 'none'
+    },
+    statusCell: {
+        width: '15%',
+        display: 'flex',
+        'flex-direction': 'row',
+        'justify-content': 'center'
     }
 }));
 
@@ -162,11 +169,7 @@ const EnhancedTableToolbar = props => {
                 <Typography className={classes.title} color="inherit" variant="subtitle1">
                     {numSelected} selected
                 </Typography>
-            ) : (
-                <Typography className={classes.title} variant="h6" id="tableTitle">
-                    Orders
-                </Typography>
-            )}
+            ) : ''}
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
@@ -223,6 +226,16 @@ const useStyles = makeStyles(theme => ({
     tableCell: {
         padding: '1em'
     },
+    statusCell: {
+        padding: '1em',
+        width: '15%'
+    },
+    buttonDiv: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     statusDiv: {
         display: 'flex',
         alignItems: 'center',
@@ -231,8 +244,18 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         'min-height': '0px !important'
     },
+    smallButton: {
+        height: '30px',
+        width: '30px',
+        minWidth: '30px',
+        minHeight: '30px'
+    },
     assignFab: {
         backgroundColor: green[600],
+        color: '#fff'
+    },
+    cancelFab: {
+        backgroundColor: red[600],
         color: '#fff'
     }
 }));
@@ -268,7 +291,7 @@ export default function DriverOrdersTableCustomized(props) {
         const rows = response.map((row) => {
 
             return createData(row.order.id, row.order.addressFrom, row.order.addressTo, getFormattedDateFromISOString(row.order.appointmentDate),
-                getUserFullName(row.order.client), getStatusCaption(row.status.titleKey));
+                getUserFullName(row.order.client));
         });
         setDataRows(rows);
         if (props.changeOrdersHandler) {
@@ -321,6 +344,35 @@ export default function DriverOrdersTableCustomized(props) {
 
     const isSelected = name => selected.indexOf(name) !== -1;
 
+    const getActionsCellValue = (rowId) => {
+        if (props.statuses === 'opened')
+            return (<TableCell align="center" className={classes.tableCell}>
+                <Tooltip title="Assign To Me">
+                    <div className={classes.statusDiv}>
+                        <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => assignOrder(e, rowId)}><CheckOutlined/></Fab>
+                    </div>
+                </Tooltip>
+            </TableCell>)
+        else if (props.statuses === 'assigned') {
+
+            return (<TableCell align="center" className={classes.statusCell}>
+                <div className={classes.buttonDiv}>
+                <Tooltip title="Refuse">
+                    <div className={classes.statusDiv}>
+                        <Fab size='small' className={classes.cancelFab + ' ' + classes.smallButton} onClick={(e) => refuseOrder(e, rowId)}><ClearOutlined/></Fab>
+                    </div>
+                </Tooltip>
+                <Tooltip title="Complete">
+                    <div className={classes.statusDiv}>
+                        <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => completeOrder(e, rowId)}><CheckOutlined/></Fab>
+                    </div>
+                </Tooltip>
+                </div>
+            </TableCell>)
+
+        }
+    }
+
 
     const getEmptyRows = (rows) => {
         return rows ?
@@ -334,6 +386,20 @@ export default function DriverOrdersTableCustomized(props) {
         setPerformedAction('assign');
         makePutCall('/driver/assignOrderToMe/' + orderId, null, refreshOpenedOrders);
         console.log(orderId);
+    }
+
+    const refuseOrder = (event, orderId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setPerformedAction('refuse');
+        makePutCall('/driver/refuseOrder/' + orderId, null, refreshOpenedOrders)
+    }
+
+    const completeOrder = (event, orderId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setPerformedAction('complete');
+        makePutCall('/driver/completeOrder/' + orderId, null, refreshOpenedOrders)
     }
 
     const refreshOpenedOrders = (response) => {
@@ -389,20 +455,9 @@ export default function DriverOrdersTableCustomized(props) {
                                             <TableCell align="left" className={classes.tableCell}>{row.addressTo}</TableCell>
                                             <TableCell align="right" className={classes.tableCell}>{row.appointmentTime}</TableCell>
                                             <TableCell align="center" className={classes.tableCell}>{row.client}</TableCell>
-                                            <TableCell align="center" className={classes.tableCell}>
-                                                <Tooltip title="Opened">
-                                                    <div className={classes.statusDiv}>
-                                                        <Avatar className={classes.avatarBlue}><ContactSupportOutlined/></Avatar>
-                                                    </div>
-                                                </Tooltip>
-                                            </TableCell>
-                                            <TableCell align="center" className={classes.tableCell}>
-                                                <Tooltip title="Assign To Me">
-                                                    <div className={classes.statusDiv}>
-                                                        <Fab size='small' className={classes.assignFab} onClick={(e) => assignOrder(e, row.id)}><CheckOutlined/></Fab>
-                                                    </div>
-                                                </Tooltip>
-                                            </TableCell>
+
+                                            {getActionsCellValue(row.id)}
+
                                         </TableRow>
                                     );
                                 })}
