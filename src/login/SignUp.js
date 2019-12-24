@@ -182,7 +182,7 @@ export default function SignUp() {
                 || !/\d/.test(value)
                 || !/[a-z]/.test(value)
                 || !/[A-Z]/.test(value)
-                || /[^0-9a-zA-Z/!@#$%^&*()\-+=\]\[_]/.test(value)) {
+                || /[^0-9a-zA-Z/!@#$%^&*()\-+=\][_]/.test(value)) {
             msg = errorMsg;
         }
         setPasswordErrorMessage(msg);
@@ -214,7 +214,7 @@ export default function SignUp() {
             .split('-').join('')
             .replace('+', '');
         if (validateIsNotEmpty(phoneNumber, phoneNumberOKCallback, phoneNumberIsEmptyCallback)) {
-            if (phoneNum.length != 11) {
+            if (phoneNum.length !== 11) {
                 setPhoneNumberErrorMessage('Phone number must contain 10 digits after country code!');
                 return false;
             } else {

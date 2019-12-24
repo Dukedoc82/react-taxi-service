@@ -1,6 +1,6 @@
-export function getDriverFullName(driver) {
-    return driver ?
-        driver.firstName + ' ' + driver.lastName :
+export function getUserFullName(user) {
+    return user ?
+        user.firstName + ' ' + user.lastName :
         '';
 }
 
@@ -14,6 +14,8 @@ export function getStatusCaption(status) {
             return 'Cancelled';
         case 'tp.status.completed':
             return 'Completed';
+        default:
+            return 'Unknown';
     }
 
 }

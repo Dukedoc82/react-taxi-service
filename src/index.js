@@ -4,11 +4,12 @@ import SignIn from './login/SignIn'
 import AppPage from "./content/AppPage";
 import SignUp from "./login/SignUp";
 
-console.log(window.location);
+//console.log(window.location);
+const docRoot = document.getElementById('root');
 if (window.location.search === '?driver')
-    ReactDOM.render(<SignUp/>, document.getElementById('root'));
+    ReactDOM.render(<SignUp/>, docRoot);
 else if (localStorage.getItem("userToken")) {
-    ReactDOM.render(<AppPage />, document.getElementById('root'));
+    ReactDOM.render(<AppPage />, docRoot);
 } else {
-    ReactDOM.render(<SignIn />, document.getElementById('root'));
+    ReactDOM.render(<SignIn />, docRoot);
 }

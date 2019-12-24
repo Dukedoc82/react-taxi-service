@@ -18,6 +18,8 @@ import LocalTaxi from '@material-ui/icons/LocalTaxi'
 import {makeGetCall} from "../utils/ajaxRequest";
 import SignIn from "../login/SignIn";
 import OrdersTable from "../content/OrdersTable"
+import DriverOrdersTable from "../content/DriverOrdersTable";
+import DriverOrdersTableCustomized from "../content/DriverOrdersTableCustomized";
 
 const drawerWidth = 240;
 
@@ -95,6 +97,21 @@ export default function PersistentDrawerLeft(props) {
         makeGetCall("/doLogout", onSuccessLogout);
     }
 
+    const handleClick = (index) => {
+        if (index === 'Driver Dashboard') {
+            ReactDOM.render(<DriverOrdersTableCustomized/>, document.getElementById('mainContent'));
+        } else if (index === 'My Orders') {
+            ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
+        }
+        console.log(index);
+    }
+
+    let menuTitles = ['My Orders'];
+    let userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData.uri.indexOf("/driver/") !== -1)
+        menuTitles.push('Driver Dashboard');
+    console.log(userData);
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -118,8 +135,8 @@ export default function PersistentDrawerLeft(props) {
                 </div>
                 <Divider />
                 <List>
-                    {['My Orders'].map((text, index) => (
-                        <ListItem button key={text}>
+                    {menuTitles.map((text, index) => (
+                        <ListItem button key={text} onClick={(e) => {handleClick(text)}}>
                             <ListItemIcon><Avatar className={classes.avatar}><LocalTaxi/></Avatar></ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>

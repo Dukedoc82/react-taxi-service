@@ -56,8 +56,8 @@ export default function SignIn() {
     }
 
     const onSuccessAuth = (response) => {
+        localStorage.setItem('userData', JSON.stringify(response));
         ReactDOM.render(<AppPage/>, document.getElementById('root'));
-        console.log(response);
     }
 
     const onError = (response) => {

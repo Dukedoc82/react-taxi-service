@@ -15,6 +15,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CreateNewOrder from './CreateNewOrder'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -40,19 +41,18 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function SimpleTable() {
+export default function DriverOrdersTable() {
     const classes = useStyles();
     const [dataRows, setDataRows] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-
-            makeGetCall("/order/", onDataLoaded);
-
+            makeGetCall("/driver/openedOrders", onDataLoaded);
     }, [])
 
     const onDataLoaded = (response) => {
+        setLoading(false);
         setDataRows(response);
-
     }
 
     const showCreateOrderDialog = (event) => {
@@ -62,11 +62,6 @@ export default function SimpleTable() {
 
     return (
         <div>
-            <div className={classes.drawerHeader}>
-                <Fab color="primary" aria-label="add" className={classes.addFab} onClick={(e)=> showCreateOrderDialog(e)}>
-                    <AddIcon />
-                </Fab>
-            </div>
         <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
@@ -74,7 +69,7 @@ export default function SimpleTable() {
                         <TableCell className={classes.tableHeader}>Address From</TableCell>
                         <TableCell className={classes.tableHeader}>Address To</TableCell>
                         <TableCell align="right" className={classes.tableHeader}>Appointment Time</TableCell>
-                        <TableCell align="center" className={classes.tableHeader}>Driver</TableCell>
+                        <TableCell align="center" className={classes.tableHeader}>Client</TableCell>
                         <TableCell align="center"className={classes.tableHeader}>Status</TableCell>
                     </TableRow>
                 </TableHead>
@@ -86,13 +81,14 @@ export default function SimpleTable() {
                             </TableCell>
                             <TableCell>{row.order.addressTo}</TableCell>
                             <TableCell align="right">{getFormattedDateFromISOString(row.order.appointmentDate)}</TableCell>
-                            <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
+                            <TableCell align="center">{getUserFullName(row.order.client)}</TableCell>
                             <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
         </TableContainer>
+            {(loading)? <LinearProgress/> : ''}
         </div>
     );
 }

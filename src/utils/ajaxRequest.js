@@ -24,7 +24,7 @@ export function makeGetCall(url, success, error, authError) {
 
 function onReadyStateChange(xhr, success, error, authError) {
     if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.status != 200) {
+        if (xhr.status !== 200) {
             if (xhr.status === 500) {
                 if (error)
                     error(JSON.parse(xhr.responseText));
@@ -41,7 +41,7 @@ function onReadyStateChange(xhr, success, error, authError) {
         } else {
             if (xhr.status === 200) {
                 if (xhr.getAllResponseHeaders().indexOf("usertoken") >= 0) {
-                    if (xhr.getResponseHeader("usertoken") != null) {
+                    if (xhr.getResponseHeader("usertoken")) {
                         localStorage.setItem("userToken", xhr.getResponseHeader("usertoken"));
                     }
                 }
