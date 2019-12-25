@@ -55,31 +55,39 @@ function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
-const headCells = [
-    { id: 'addressFrom', numeric: false, disablePadding: true, label: 'Address From', sortable: true},
-    { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
-    { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
-    { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' },
-    { id: 'actions', numeric: false, disablePadding: true, label: 'Actions', align: 'center'}
-];
-
 function EnhancedTableHead(props) {
-    const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+    const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, forStatus } = props;
     const createSortHandler = property => event => {
         onRequestSort(event, property);
     };
+    const headCells = forStatus === 'closed' ? [
+        { id: 'addressFrom', numeric: false, label: 'Address From', sortable: true},
+        { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
+        { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
+        { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' }
+    ]: [
+        { id: 'addressFrom', numeric: false, disablePadding: true, label: 'Address From', sortable: true},
+        { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
+        { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
+        { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' },
+        { id: 'actions', numeric: false, disablePadding: true, label: 'Actions', align: 'center'}
+    ];
+
+    const getCheckboxCell = (numSelected, rowCount, onSelectAllClick) => {
+        return forStatus !== 'closed' ? (<TableCell padding="checkbox">
+            <Checkbox
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={numSelected === rowCount && rowCount > 0}
+                onChange={onSelectAllClick}
+                inputProps={{ 'aria-label': 'select all desserts' }}
+            />
+        </TableCell>) : '';
+    }
 
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
-                    <Checkbox
-                        indeterminate={numSelected > 0 && numSelected < rowCount}
-                        checked={numSelected === rowCount && rowCount > 0}
-                        onChange={onSelectAllClick}
-                        inputProps={{ 'aria-label': 'select all desserts' }}
-                    />
-                </TableCell>
+                {getCheckboxCell(numSelected, rowCount, onSelectAllClick)}
                 {headCells.map(headCell => (
                     <TableCell  className={classes.tableHeader}
                         key={headCell.id}
@@ -159,14 +167,26 @@ const useToolbarStyles = makeStyles(theme => ({
     },
     fabButton: {
         color: '#fff',
-        boxShadow: 'none'
-
+        boxShadow: 'none',
+        margin: '0.25em'
     },
     refreshButton: {
         backgroundColor: blue[600],
     },
     cancelFab: {
         backgroundColor: red[600],
+    },
+    assignFab: {
+        backgroundColor: green[600],
+        color: '#fff'
+    },
+    statusDiv: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        ...theme.mixins.toolbar,
+        justifyContent: 'center',
+        'min-height': '0px !important'
     }
 }));
 
@@ -176,9 +196,7 @@ const byClasses = classes => {
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
-    const { numSelected, refreshOrders, selected, refuseOrders } = props;
-
-
+    const { numSelected, refreshOrders, selected, refuseOrders, assignOrders, completeOrders, forStatus } = props;
 
     return (
         <Toolbar
@@ -193,12 +211,24 @@ const EnhancedTableToolbar = props => {
             ) : ''}
 
             {numSelected > 0 ? (
-                <Tooltip title="Refuse selected">
+                forStatus === 'assigned' ? (<div className={classes.statusDiv}> <Tooltip title="Refuse selected">
                     <Fab className={byClasses([classes.fabButton, classes.cancelFab, classes.smallButton])}
                          onClick={(e) => refuseOrders(e, selected)}>
                         <ClearOutlined />
                     </Fab>
-                </Tooltip>
+                </Tooltip> <Tooltip title="Complete selected">
+                    <Fab className={byClasses([classes.fabButton, classes.assignFab, classes.smallButton])}
+                         onClick={(e) => completeOrders(e, selected)}>
+                        <CheckOutlined />
+                    </Fab>
+                </Tooltip></div>) : (forStatus === 'opened' ?
+                        (<Tooltip title="Assign selected">
+                            <Fab className={byClasses([classes.fabButton, classes.assignFab, classes.smallButton])}
+                                 onClick={(e) => assignOrders(e, selected)}>
+                                <CheckOutlined />
+                            </Fab>
+                            </Tooltip>
+                        ): '')
             ) : (
                 <Tooltip title="Refresh">
                     <Fab className={byClasses([classes.fabButton, classes.refreshButton, classes.smallButton])}
@@ -285,6 +315,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DriverOrdersTableCustomized(props) {
     const classes = useStyles();
+    const {statuses} = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('addressFrom');
     const [selected, setSelected] = React.useState(props.selected);
@@ -293,9 +324,9 @@ export default function DriverOrdersTableCustomized(props) {
     const [dataRows, setDataRows] = React.useState(props.orders);
     const [performedAction, setPerformedAction] = React.useState('');
 
-    const getOrdersUrl = props.statuses === 'opened' ?
-        '/driver/openedOrders' : props.statuses === 'assigned' ?
-            '/driver/assignedOrders' : props.statuses ==='closed' ? '/driver/completedOrders' : 'null';
+    const getOrdersUrl = statuses === 'opened' ?
+        '/driver/openedOrders' : statuses === 'assigned' ?
+            '/driver/assignedOrders' : statuses ==='closed' ? '/driver/completedOrders' : 'null';
 
     const handleRequestSort = (event, property) => {
         const isDesc = orderBy === property && order === 'desc';
@@ -368,7 +399,7 @@ export default function DriverOrdersTableCustomized(props) {
     const isSelected = name => selected.indexOf(name) !== -1;
 
     const getActionsCellValue = (rowId) => {
-        if (props.statuses === 'opened')
+        if (statuses === 'opened')
             return (<TableCell align="center" className={classes.tableCell}>
                 <Tooltip title="Assign To Me">
                     <div className={classes.statusDiv}>
@@ -376,7 +407,7 @@ export default function DriverOrdersTableCustomized(props) {
                     </div>
                 </Tooltip>
             </TableCell>)
-        else if (props.statuses === 'assigned') {
+        else if (statuses === 'assigned') {
 
             return (<TableCell align="center" className={classes.statusCell}>
                 <div className={classes.buttonDiv}>
@@ -417,6 +448,20 @@ export default function DriverOrdersTableCustomized(props) {
         makePutCall('/driver/refuseOrders', orderIds, refreshOpenedOrders);
     }
 
+    const assignOrders = (event, orderIds) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setPerformedAction('assign');
+        makePutCall('/driver/assignOrders', orderIds, refreshOpenedOrders);
+    }
+
+    const completeOrders = (event, orderIds) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setPerformedAction('assign');
+        makePutCall('/driver/completeOrders', orderIds, refreshOpenedOrders);
+    }
+
     const refuseOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
@@ -435,11 +480,20 @@ export default function DriverOrdersTableCustomized(props) {
         makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
     }
 
+    const getCheckboxCell = (classes, isItemSelected, labelId) => {
+        return statuses !== 'closed' ? (<TableCell padding="checkbox" className={classes.tableCell}>
+            <Checkbox
+                checked={isItemSelected}
+                inputProps={{ 'aria-labelledby': labelId }}
+            />
+        </TableCell>) : '';
+    }
+
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders} selected={selected}
-                    refuseOrders={refuseOrders}/>
+                    refuseOrders={refuseOrders} forStatus={statuses} assignOrders={assignOrders} completeOrders={completeOrders}/>
                 <TableContainer>
                     <Table
                         className={classes.table}
@@ -455,6 +509,7 @@ export default function DriverOrdersTableCustomized(props) {
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
                             rowCount={dataRows ? dataRows.length : 0}
+                            forStatus={statuses}
                         />
                         <TableBody>
                             {stableSort(dataRows || [], getSorting(order, orderBy))
@@ -473,13 +528,8 @@ export default function DriverOrdersTableCustomized(props) {
                                             key={row.id}
                                             selected={isItemSelected}
                                         >
-                                            <TableCell padding="checkbox" className={classes.tableCell}>
-                                                <Checkbox
-                                                    checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
-                                                />
-                                            </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none" className={classes.tableCell}>
+                                            {getCheckboxCell(classes, isItemSelected, labelId)}
+                                            <TableCell component="th" id={labelId} scope="row" className={classes.tableCell}>
                                                 {row.addressFrom}
                                             </TableCell>
                                             <TableCell align="left" className={classes.tableCell}>{row.addressTo}</TableCell>
