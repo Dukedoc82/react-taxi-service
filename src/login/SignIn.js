@@ -61,11 +61,11 @@ export default function SignIn() {
     }
 
     const onError = (response) => {
-        console.log(response);
+        //console.log(response);
     }
 
     const onAuthError = (response) => {
-        console.log(response);
+        //console.log(response);
     }
 
     const onSubmit = (event) => {

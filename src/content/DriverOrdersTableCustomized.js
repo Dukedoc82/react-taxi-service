@@ -19,15 +19,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
-import {getStatusCaption, getUserFullName} from "../utils/DataUtils";
-import ContactSupportOutlined from '@material-ui/icons/ContactSupportOutlined'
-import Avatar from '@material-ui/core/Avatar';
-import {lightBlue, green, red} from '@material-ui/core/colors'
+import {getUserFullName} from "../utils/DataUtils";
+import {lightBlue, green, red, blue} from '@material-ui/core/colors'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import CheckOutlined from '@material-ui/icons/CheckOutlined';
 import ClearOutlined from '@material-ui/icons/ClearOutlined'
-import CancelOutlined from '@material-ui/icons/CancelOutlined'
 import Fab from '@material-ui/core/Fab';
+import RefreshOutlined from '@material-ui/icons/RefreshOutlined'
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -152,12 +150,35 @@ const useToolbarStyles = makeStyles(theme => ({
         display: 'flex',
         'flex-direction': 'row',
         'justify-content': 'center'
+    },
+    smallButton: {
+        height: '30px',
+        width: '30px',
+        minWidth: '30px',
+        minHeight: '30px'
+    },
+    fabButton: {
+        color: '#fff',
+        boxShadow: 'none'
+
+    },
+    refreshButton: {
+        backgroundColor: blue[600],
+    },
+    cancelFab: {
+        backgroundColor: red[600],
     }
 }));
 
+const byClasses = classes => {
+    return classes.join(' ');
+}
+
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const { numSelected, refreshOrders, selected, refuseOrders } = props;
+
+
 
     return (
         <Toolbar
@@ -172,16 +193,18 @@ const EnhancedTableToolbar = props => {
             ) : ''}
 
             {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
-                        <DeleteIcon />
-                    </IconButton>
+                <Tooltip title="Refuse selected">
+                    <Fab className={byClasses([classes.fabButton, classes.cancelFab, classes.smallButton])}
+                         onClick={(e) => refuseOrders(e, selected)}>
+                        <ClearOutlined />
+                    </Fab>
                 </Tooltip>
             ) : (
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
+                <Tooltip title="Refresh">
+                    <Fab className={byClasses([classes.fabButton, classes.refreshButton, classes.smallButton])}
+                         onClick={refreshOrders}>
+                        <RefreshOutlined/>
+                    </Fab>
                 </Tooltip>
             )}
         </Toolbar>
@@ -261,7 +284,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DriverOrdersTableCustomized(props) {
-    console.log(props);
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('addressFrom');
@@ -297,6 +319,7 @@ export default function DriverOrdersTableCustomized(props) {
         if (props.changeOrdersHandler) {
             props.changeOrdersHandler(rows, performedAction);
         }
+        setSelected([]);
         setPerformedAction('');
     }
 
@@ -306,7 +329,7 @@ export default function DriverOrdersTableCustomized(props) {
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
-            const newSelecteds = dataRows.map(n => n.addressFrom);
+            const newSelecteds = dataRows.map(n => n.id);
             updateSelected(newSelecteds);
             return;
         }
@@ -385,7 +408,13 @@ export default function DriverOrdersTableCustomized(props) {
         event.stopPropagation();
         setPerformedAction('assign');
         makePutCall('/driver/assignOrderToMe/' + orderId, null, refreshOpenedOrders);
-        console.log(orderId);
+    }
+
+    const refuseOrders = (event, orderIds) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setPerformedAction('refuse');
+        makePutCall('/driver/refuseOrders', orderIds, refreshOpenedOrders);
     }
 
     const refuseOrder = (event, orderId) => {
@@ -409,7 +438,8 @@ export default function DriverOrdersTableCustomized(props) {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length} />
+                <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders} selected={selected}
+                    refuseOrders={refuseOrders}/>
                 <TableContainer>
                     <Table
                         className={classes.table}
@@ -430,17 +460,17 @@ export default function DriverOrdersTableCustomized(props) {
                             {stableSort(dataRows || [], getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.addressFrom);
+                                    const isItemSelected = isSelected(row.id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => handleClick(event, row.addressFrom)}
+                                            onClick={event => handleClick(event, row.id)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.addressFrom}
+                                            key={row.id}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox" className={classes.tableCell}>
