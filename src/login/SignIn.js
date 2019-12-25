@@ -36,22 +36,26 @@ const useStyles = makeStyles(theme => ({
 
 const openSignUp = (event) => {
     event.preventDefault();
-    //ReactDOM.render(<AppPage/>, document.getElementById('root'));
     ReactDOM.render(<SignUp/>, document.getElementById('root'));
 };
 
 export default function SignIn() {
     const classes = useStyles();
     const [username, setUsername] = useState('');
+    const [userNameErrorMsg, setUserNameErrorMsg] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordErrorMsg, setPasswordErrorMsg] = useState('');
 
     const onPasswordChange = (event) => {
         event.preventDefault();
+        setPasswordErrorMsg(event.target.value === '' ? 'Password can not be empty!' : '');
+        setUserNameErrorMsg(username === '' ? 'Email Address can not be empty!' : '');
         setPassword(event.target.value);
     };
 
     const onUserNameChange = (event) => {
         event.preventDefault();
+        setUserNameErrorMsg(event.target.value === '' ? 'Email Address can not be empty!' : '');
         setUsername(event.target.value);
     };
 
@@ -60,12 +64,26 @@ export default function SignIn() {
         ReactDOM.render(<AppPage/>, document.getElementById('root'));
     };
 
-    const onError = (response) => {
-        //console.log(response);
+    const onError = () => {
+        setUserNameErrorMsg('No such Email Address/Password found');
     };
 
-    const onAuthError = (response) => {
-        //console.log(response);
+    const onAuthError = () => {
+        setUserNameErrorMsg('No such Email Address/Password found');
+    };
+
+    const validate = () => {
+        const isUserNameValid = validateUserName();
+        const isPasswordValid = validatePassword();
+        return isUserNameValid && isPasswordValid;
+    };
+
+    const validateUserName = () => {
+        return !!username || setUserNameErrorMsg('Email Address can not be empty!');
+    };
+
+    const validatePassword = () => {
+        return !!password || setPasswordErrorMsg('Password can not be empty!');
     };
 
     const onSubmit = (event) => {
@@ -74,8 +92,7 @@ export default function SignIn() {
             username: username,
             password: password
         };
-        makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError);
-
+        validate() && makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError);
     };
 
     return (
@@ -101,6 +118,8 @@ export default function SignIn() {
                         autoFocus
                         onChange={onUserNameChange}
                         value={username}
+                        helperText={userNameErrorMsg}
+                        error={!!userNameErrorMsg}
                     />
                     <TextField
                         variant="outlined"
@@ -114,6 +133,8 @@ export default function SignIn() {
                         autoComplete="current-password"
                         onChange={onPasswordChange}
                         value={password}
+                        helperText={passwordErrorMsg}
+                        error={!!passwordErrorMsg}
                     />
                     <Button
                         type="submit"
