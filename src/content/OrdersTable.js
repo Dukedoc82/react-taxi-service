@@ -48,17 +48,17 @@ export default function SimpleTable() {
 
             makeGetCall("/order/", onDataLoaded);
 
-    }, [])
+    }, []);
 
     const onDataLoaded = (response) => {
         setDataRows(response);
 
-    }
+    };
 
     const showCreateOrderDialog = (event) => {
         event.preventDefault();
         ReactDOM.render(<CreateNewOrder/>, document.getElementById('mainContent'));
-    }
+    };
 
     return (
         <div>
@@ -75,7 +75,7 @@ export default function SimpleTable() {
                         <TableCell className={classes.tableHeader}>Address To</TableCell>
                         <TableCell align="right" className={classes.tableHeader}>Appointment Time</TableCell>
                         <TableCell align="center" className={classes.tableHeader}>Driver</TableCell>
-                        <TableCell align="center"className={classes.tableHeader}>Status</TableCell>
+                        <TableCell align="center" className={classes.tableHeader}>Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

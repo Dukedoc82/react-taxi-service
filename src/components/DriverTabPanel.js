@@ -60,7 +60,7 @@ export default function DriverTabPanel() {
         event.preventDefault();
         event.stopPropagation();
         setValue(newValue);
-    }
+    };
 
     const changeOpenedOrderHandler = (orders, action) => {
         setOpenedOrders(orders);
@@ -69,31 +69,31 @@ export default function DriverTabPanel() {
             setAssignedOrders(null);
         if (action === 'complete')
             setCompletedOrders(null);
-    }
+    };
 
     const changeOpenedSelectedHandler = (selected) => {
         setOpenedSelected(selected);
-    }
+    };
 
     const changeAssignedOrderHandler = (orders) => {
         setAssignedOrders(orders);
         setAssignedSelected([]);
-    }
+    };
 
     const changeAssignedSelectedHandler = (selected) => {
         setAssignedSelected(selected);
-    }
+    };
 
     const changeCompletedOrderHandler = (orders) => {
         if (orders) {
             setCompletedOrders(orders);
             setCompletedSelected([]);
         }
-    }
+    };
 
     const changeCompletedSelectedHandler = (selected) => {
         setCompletedSelected(selected);
-    }
+    };
 
     return (
         <div className={classes.root}>

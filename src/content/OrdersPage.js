@@ -19,24 +19,24 @@ class OrdersPage extends React.Component {
 
     success = (data) => {
         this.setState({orders: data});
-    }
+    };
 
     getOrders = () => {
         makeGetCall("/order/", this.success);
-    }
+    };
 
     showCreateOrderForm = () => {
         ReactDOM.render(<CreateOrder/>, document.getElementById('root'));
-    }
+    };
 
     getDriverFullName = (driver) => {
         return driver === null ? '' : driver.firstName + ' ' + driver.lastName;
-    }
+    };
 
     cancelOrder = (event, orderId) => {
         event.preventDefault();
         makePutCall("/order/cancel/" + orderId, null, this.getOrders);
-    }
+    };
 
     getOrderActions = (status, orderId) => {
         if (status.titleKey === 'tp.status.cancelled' || status.titleKey === 'tp.status.completed') {
@@ -46,7 +46,7 @@ class OrdersPage extends React.Component {
                 (<a href='#' orderid={orderId} onClick={((e) => this.cancelOrder(e, orderId))}>Cancel</a>)
             )
         }
-    }
+    };
 
     render() {
         return (
@@ -65,10 +65,10 @@ class OrdersPage extends React.Component {
                         <th>Address to</th>
                         <th>Driver</th>
                         <th>Status</th>
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                     {this.state.orders.map((orderDetails, index) => {
-                        const { updatedOn, order, driver, status } = orderDetails //destructuring
+                        const { updatedOn, order, driver, status } = orderDetails; //destructuring
                         return (
                             <tr id={order.id} key={order.id}>
                                 <td>{index + 1}</td>

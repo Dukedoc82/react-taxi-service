@@ -83,7 +83,7 @@ export default function SignUp() {
             window.location.href = window.location.origin;
         else
             ReactDOM.render(<SignIn/>, document.getElementById('root'));
-    }
+    };
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -94,19 +94,19 @@ export default function SignUp() {
                 firstName: firstName,
                 lastName: lastName,
                 phoneNumber: phoneNumber
-            }
+            };
             let url = window.location.search === '?driver' ?
                 '/registerAsADriver' :
                 '/register';
             makePostCall(url, body, onSuccessRegister, onFailRegister);
         }
-    }
+    };
 
-    const onSuccessRegister = (response) => {
+    const onSuccessRegister = () => {
         setAlertDialogTitle('Success');
         setAlertDialogMessage('User ' + username + ' successfully registered.');
         setSuccessMessageOpen(true);
-    }
+    };
 
     const onFailRegister = (response) => {
         setAlertDialogTitle('Error');
@@ -115,31 +115,31 @@ export default function SignUp() {
             msg = 'User with such email address or phone number already registered!';
         setAlertDialogMessage(msg);
         setSuccessMessageOpen(true);
-    }
+    };
 
     const onUsernameChange = (event) => {
         event.preventDefault();
         setUsername(event.target.value);
         setUserNameErrorMessage(!!event.target.value ? '' : userNameErrorMessage);
-    }
+    };
 
     const onFirstNameChange = (event) => {
         event.preventDefault();
         setFirstName(event.target.value);
         setFirstNameErrorMessage(!!event.target.value ? '' : firstNameErrorMessage);
-    }
+    };
 
     const onLastNameChange = (event) => {
         event.preventDefault();
         setLastName(event.target.value);
         setLastNameErrorMessage(!!event.target.value ? '' : lastNameErrorMessage);
-    }
+    };
 
     const onPasswordChange = (event) => {
         event.preventDefault();
         setPassword(event.target.value);
         setPasswordErrorMessage(!!event.target.value ? '' : passwordErrorMessage);
-    }
+    };
 
     const onPnoneNumberChange = (value) => {
         const phoneNum = value.startsWith('8') || value.startsWith('+8')
@@ -147,31 +147,31 @@ export default function SignUp() {
             : value;
         setPhoneNumber(phoneNum);
         setPhoneNumberErrorMessage(!!value ? '' : phoneNumberErrorMessage);
-    }
+    };
 
     const userNameIsEmptyCallback = () => {
         setUserNameErrorMessage('Email can not be empty!');
-    }
+    };
 
     const userNameOKCallback = () => {
         setUserNameErrorMessage('');
-    }
+    };
 
     const firstNameIsNotValidCallback = () => {
         setFirstNameErrorMessage('First Name can not be empty!');
-    }
+    };
 
     const firstNameOKCallback = () => {
         setFirstNameErrorMessage('');
-    }
+    };
 
     const lastNameIsNotValidCallback = () => {
         setLastNameErrorMessage("Last Name can not be empty!");
-    }
+    };
 
     const lastNameOKCallback = () => {
         setLastNameErrorMessage('');
-    }
+    };
 
     const validatePassword = (value) => {
         let msg = '';
@@ -187,15 +187,15 @@ export default function SignUp() {
         }
         setPasswordErrorMessage(msg);
         return !msg;
-    }
+    };
 
     const phoneNumberIsEmptyCallback = () => {
         setPhoneNumberErrorMessage('Phone Number can not be empty!');
-    }
+    };
 
     const phoneNumberOKCallback = () => {
         setPhoneNumberErrorMessage('');
-    }
+    };
 
     const handleSnackBarClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -224,7 +224,7 @@ export default function SignUp() {
         } else {
             return false;
         }
-    }
+    };
 
     const validateForm = () => {
         let isUserNameValid = validateIsNotEmpty(username, userNameOKCallback, userNameIsEmptyCallback);
@@ -234,7 +234,7 @@ export default function SignUp() {
         let isPhoneNumberValid = validatePhoneNumber(phoneNumber);
         return isUserNameValid && isFirstNameValid && isLastNameValid && isPasswordValid && isPhoneNumberValid;
 
-    }
+    };
 
     return (
         <Container component="main" maxWidth="xs">

@@ -18,23 +18,23 @@ class CreateOrder extends React.Component {
 
     onAddressFromChange = (event) => {
         this.state.addressFrom = event.target.value;
-    }
+    };
 
     onAddressToChange = (event) => {
         this.state.addressTo = event.target.value;
-    }
+    };
 
     onAppointmentHourChange = (event) => {
         this.state.appointmentHour = event.target.value;
-    }
+    };
 
     onAppointmentMinuteChange = (event) => {
         this.state.appointmentMinute = event.target.value;
-    }
+    };
 
-    successCreate = (response) => {
+    successCreate = () => {
         ReactDOM.render(<OrdersPage />, document.getElementById('root'));
-    }
+    };
 
     createOrder = (event) => {
         event.preventDefault();
@@ -42,9 +42,9 @@ class CreateOrder extends React.Component {
             addressFrom: this.state.addressFrom,
             addressTo: this.state.addressTo,
             appointmentDate: getStrDateFromTime(this.state.appointmentHour, this.state.appointmentMinute)
-        }
+        };
         makePostCall("/order/new", body, this.successCreate)
-    }
+    };
 
     render() {
         return(<form onSubmit={this.createOrder}>

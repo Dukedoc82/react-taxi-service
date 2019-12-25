@@ -4,14 +4,12 @@ import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import { green } from '@material-ui/core/colors';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { validateIsNotEmpty } from "../utils/ValidationUtils";
-import AlertDialog from "../components/AlertDialog";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import OrdersTable from './OrdersTable'
@@ -71,7 +69,6 @@ export default function CreateNewOrder() {
 
     const [addressFrom, setAddressFrom] = useState('');
     const [addressTo, setAddressTo] = useState('');
-    const [successMessageOpen, setSuccessMessageOpen] = useState(false);
     const [selectedTime, setSelectedTime] =
         useState(new Date(2020, 2, 8, currentTime.getHours(), currentTime.getMinutes()));
     const [addressFromError, setAddressFromError] = useState('');
@@ -81,38 +78,38 @@ export default function CreateNewOrder() {
         event.preventDefault();
         setAddressFrom(event.target.value);
         setAddressFromError(event.target.value ? '' : ADDRESS_FROM_ERR_MSG);
-    }
+    };
 
     const onAddressToChange = (event) => {
         event.preventDefault();
         setAddressTo(event.target.value);
         setAddressToError(event.target.value ? '' : ADDRESS_TO_ERR_MSG);
-    }
+    };
 
     const openOrdersTable = (event) => {
         event.preventDefault();
         ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
-    }
+    };
 
-    const onSuccessCreate = (response) => {
+    const onSuccessCreate = () => {
         ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
-    }
+    };
 
     const onCorrectAddressFrom = () => {
         setAddressFromError('');
-    }
+    };
 
     const onInvalidAddressFrom = () => {
         setAddressFromError(ADDRESS_FROM_ERR_MSG);
-    }
+    };
 
     const onCorrectAddressTo = () => {
         setAddressToError('');
-    }
+    };
 
     const onInvalidAddressTo = () => {
         setAddressToError(ADDRESS_TO_ERR_MSG);
-    }
+    };
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -124,20 +121,12 @@ export default function CreateNewOrder() {
             };
             makePostCall("/order/new", body, onSuccessCreate);
         }
-    }
+    };
 
     const validateForm = () => {
         let addrFromIsNotEmpty = validateIsNotEmpty(addressFrom, onCorrectAddressFrom, onInvalidAddressFrom);
         let addrToIsNotEmpty = validateIsNotEmpty(addressTo, onCorrectAddressTo, onInvalidAddressTo);
         return addrFromIsNotEmpty && addrToIsNotEmpty;
-    }
-
-    const handleSnackBarClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setSuccessMessageOpen(false);
     };
 
     return (

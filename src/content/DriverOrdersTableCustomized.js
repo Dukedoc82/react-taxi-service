@@ -14,10 +14,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import {getUserFullName} from "../utils/DataUtils";
 import {lightBlue, green, red, blue} from '@material-ui/core/colors'
@@ -82,7 +79,7 @@ function EnhancedTableHead(props) {
                 inputProps={{ 'aria-label': 'select all desserts' }}
             />
         </TableCell>) : '';
-    }
+    };
 
     return (
         <TableHead>
@@ -192,7 +189,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const byClasses = classes => {
     return classes.join(' ');
-}
+};
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
@@ -315,7 +312,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DriverOrdersTableCustomized(props) {
     const classes = useStyles();
-    const {statuses} = props;
+    const {statuses, selectedChangeHandler, changeOrdersHandler} = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('addressFrom');
     const [selected, setSelected] = React.useState(props.selected);
@@ -336,9 +333,9 @@ export default function DriverOrdersTableCustomized(props) {
 
     const updateSelected = (selected) => {
         setSelected(selected);
-        if (props.selectedChangeHandler)
-            props.selectedChangeHandler(selected);
-    }
+        if (selectedChangeHandler)
+            selectedChangeHandler(selected);
+    };
 
     const onOpenedOrdersLoaded = (response) => {
         const rows = response.map((row) => {
@@ -347,12 +344,12 @@ export default function DriverOrdersTableCustomized(props) {
                 getUserFullName(row.order.client));
         });
         setDataRows(rows);
-        if (props.changeOrdersHandler) {
-            props.changeOrdersHandler(rows, performedAction);
+        if (changeOrdersHandler) {
+            changeOrdersHandler(rows, performedAction);
         }
         setSelected([]);
         setPerformedAction('');
-    }
+    };
 
     useEffect(() => {
         makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
@@ -406,7 +403,7 @@ export default function DriverOrdersTableCustomized(props) {
                         <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => assignOrder(e, rowId)}><CheckOutlined/></Fab>
                     </div>
                 </Tooltip>
-            </TableCell>)
+            </TableCell>);
         else if (statuses === 'assigned') {
 
             return (<TableCell align="center" className={classes.statusCell}>
@@ -425,60 +422,60 @@ export default function DriverOrdersTableCustomized(props) {
             </TableCell>)
 
         }
-    }
+    };
 
 
     const getEmptyRows = (rows) => {
         return rows ?
             rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage) :
             0;
-    }
+    };
 
     const assignOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('assign');
         makePutCall('/driver/assignOrderToMe/' + orderId, null, refreshOpenedOrders);
-    }
+    };
 
     const refuseOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('refuse');
         makePutCall('/driver/refuseOrders', orderIds, refreshOpenedOrders);
-    }
+    };
 
     const assignOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('assign');
         makePutCall('/driver/assignOrders', orderIds, refreshOpenedOrders);
-    }
+    };
 
     const completeOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('assign');
         makePutCall('/driver/completeOrders', orderIds, refreshOpenedOrders);
-    }
+    };
 
     const refuseOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('refuse');
         makePutCall('/driver/refuseOrder/' + orderId, null, refreshOpenedOrders)
-    }
+    };
 
     const completeOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('complete');
         makePutCall('/driver/completeOrder/' + orderId, null, refreshOpenedOrders)
-    }
+    };
 
-    const refreshOpenedOrders = (response) => {
+    const refreshOpenedOrders = () => {
         makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
-    }
+    };
 
     const getCheckboxCell = (classes, isItemSelected, labelId) => {
         return statuses !== 'closed' ? (<TableCell padding="checkbox" className={classes.tableCell}>
@@ -487,7 +484,7 @@ export default function DriverOrdersTableCustomized(props) {
                 inputProps={{ 'aria-labelledby': labelId }}
             />
         </TableCell>) : '';
-    }
+    };
 
     return (
         <div className={classes.root}>

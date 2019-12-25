@@ -17,6 +17,4 @@ export function validatePassword(value, callback) {
             callback('Password can not be empty!');
         }
     }
-
-
 }

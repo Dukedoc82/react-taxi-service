@@ -12,18 +12,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AlertDialog(props) {
+    const {handleClose, open} = props;
     const getDialogTitle = (title) => {
         return !!title ?
             (<DialogTitle id="alert-dialog-slide-title">{props.title}</DialogTitle>) :
             '';
-    }
+    };
 
     return (
             <Dialog
-                open={props.open}
+                open={open}
                 TransitionComponent={Transition}
                 keepMounted
-                onClose={props.handleClose}
+                onClose={handleClose}
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
@@ -34,7 +35,7 @@ export default function AlertDialog(props) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={props.handleClose} color="primary">
+                    <Button onClick={handleClose} color="primary">
                         OK
                     </Button>
                 </DialogActions>

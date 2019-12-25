@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import ReactDOM from 'react-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,9 +9,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {makeGetCall} from "../utils/ajaxRequest";
 import { green } from '@material-ui/core/colors';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import CreateNewOrder from './CreateNewOrder'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -48,17 +44,12 @@ export default function DriverOrdersTable() {
 
     useEffect(() => {
             makeGetCall("/driver/openedOrders", onDataLoaded);
-    }, [])
+    }, []);
 
     const onDataLoaded = (response) => {
         setLoading(false);
         setDataRows(response);
-    }
-
-    const showCreateOrderDialog = (event) => {
-        event.preventDefault();
-        ReactDOM.render(<CreateNewOrder/>, document.getElementById('mainContent'));
-    }
+    };
 
     return (
         <div>
@@ -70,7 +61,7 @@ export default function DriverOrdersTable() {
                         <TableCell className={classes.tableHeader}>Address To</TableCell>
                         <TableCell align="right" className={classes.tableHeader}>Appointment Time</TableCell>
                         <TableCell align="center" className={classes.tableHeader}>Client</TableCell>
-                        <TableCell align="center"className={classes.tableHeader}>Status</TableCell>
+                        <TableCell align="center" className={classes.tableHeader}>Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -87,27 +87,28 @@ export default function PersistentDrawerLeft(props) {
     const classes = useStyles();
     const theme = useTheme();
 
-    const onSuccessLogout = (response) => {
+    const onSuccessLogout = () => {
         localStorage.removeItem("userToken");
         ReactDOM.render(<SignIn/>, document.getElementById('root'));
-    }
+    };
 
     const doLogout = (event) => {
+        event.preventDefault();
         makeGetCall("/doLogout", onSuccessLogout);
-    }
+    };
 
     const handleClick = (index) => {
-        if (index === 'Driver Dashboard') {
+        if (index === 'driverDashboard') {
             ReactDOM.render(<DriverTabPanel />, document.getElementById('mainContent'));
-        } else if (index === 'My Orders') {
+        } else if (index === 'userDashboard') {
             ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
         }
-    }
+    };
 
-    let menuTitles = ['My Orders'];
+    let menuTitles = [{id: 'userDashboard', text: 'My Orders'}];
     let userData = JSON.parse(localStorage.getItem('userData'));
     if (userData.uri.indexOf("/driver/") !== -1)
-        menuTitles.push('Driver Dashboard');
+        menuTitles.push({id: 'driverDashboard', text: 'Driver Dashboard'});
 
     return (
         <div className={classes.root}>
@@ -132,16 +133,16 @@ export default function PersistentDrawerLeft(props) {
                 </div>
                 <Divider />
                 <List>
-                    {menuTitles.map((text, index) => (
-                        <ListItem button key={text} onClick={(e) => {handleClick(text)}}>
+                    {menuTitles.map((menuTitle) => (
+                        <ListItem button key={menuTitle.id} onClick={() => {handleClick(menuTitle.id)}}>
                             <ListItemIcon><Avatar className={classes.avatar}><LocalTaxi/></Avatar></ListItemIcon>
-                            <ListItemText primary={text} />
+                            <ListItemText primary={menuTitle.text} />
                         </ListItem>
                     ))}
                 </List>
                 <Divider />
                 <List>
-                    {['Sign Out'].map((text, index) => (
+                    {['Sign Out'].map((text) => (
                         <ListItem button key={text} onClick={(e)=>doLogout(e)}>
                             <ListItemIcon><PowerSettingsNew/></ListItemIcon>
                             <ListItemText primary={text} />

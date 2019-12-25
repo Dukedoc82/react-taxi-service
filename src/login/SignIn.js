@@ -38,7 +38,7 @@ const openSignUp = (event) => {
     event.preventDefault();
     //ReactDOM.render(<AppPage/>, document.getElementById('root'));
     ReactDOM.render(<SignUp/>, document.getElementById('root'));
-}
+};
 
 export default function SignIn() {
     const classes = useStyles();
@@ -48,35 +48,35 @@ export default function SignIn() {
     const onPasswordChange = (event) => {
         event.preventDefault();
         setPassword(event.target.value);
-    }
+    };
 
     const onUserNameChange = (event) => {
         event.preventDefault();
         setUsername(event.target.value);
-    }
+    };
 
     const onSuccessAuth = (response) => {
         localStorage.setItem('userData', JSON.stringify(response));
         ReactDOM.render(<AppPage/>, document.getElementById('root'));
-    }
+    };
 
     const onError = (response) => {
         //console.log(response);
-    }
+    };
 
     const onAuthError = (response) => {
         //console.log(response);
-    }
+    };
 
     const onSubmit = (event) => {
         event.preventDefault();
         let body = {
             username: username,
             password: password
-        }
+        };
         makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError);
 
-    }
+    };
 
     return (
         <Container component="main" maxWidth="xs">

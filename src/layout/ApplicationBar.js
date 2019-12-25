@@ -28,7 +28,7 @@ export default function ApplicationBar() {
     const onMenuClicked = (event) => {
         event.preventDefault();
         setVerticalMenuOpened(!verticalMenuOpened);
-    }
+    };
 
     return (
         <div className={classes.root}>
@@ -44,7 +44,7 @@ export default function ApplicationBar() {
                     <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
-            <PersistentSidebar open={verticalMenuOpened} handleDrawerClose={(e) => setVerticalMenuOpened(false)}/>
+            <PersistentSidebar open={verticalMenuOpened} handleDrawerClose={() => setVerticalMenuOpened(false)}/>
         </div>
     );
 }
