@@ -337,7 +337,7 @@ export default function DriverOrdersTableCustomized(props) {
     const classes = useStyles();
     const {statuses, selectedChangeHandler, changeOrdersHandler} = props;
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('addressFrom');
+    const [orderBy, setOrderBy] = React.useState('appointmentTime');
     const [selected, setSelected] = React.useState(props.selected);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
