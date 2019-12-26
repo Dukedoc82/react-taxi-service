@@ -23,19 +23,35 @@ import CheckOutlined from '@material-ui/icons/CheckOutlined';
 import ClearOutlined from '@material-ui/icons/ClearOutlined'
 import Fab from '@material-ui/core/Fab';
 import RefreshOutlined from '@material-ui/icons/RefreshOutlined'
+import {CircularProgress} from "@material-ui/core";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
 }
 
 function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
+    console.log(a);
+    console.log(b);
+    console.log(orderBy);
+    if (orderBy === 'appointmentTime') {
+        let aDate = new Date(a[orderBy]);
+        let bDate = new Date(b[orderBy]);
+        if (bDate < aDate) {
+            return -1;
+        }
+        if (bDate > aDate) {
+            return 1;
+        }
+        return 0;
+    } else {
+        if (b[orderBy] < a[orderBy]) {
+            return -1;
+        }
+        if (b[orderBy] > a[orderBy]) {
+            return 1;
+        }
+        return 0;
     }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
 }
 
 function stableSort(array, cmp) {
@@ -58,14 +74,14 @@ function EnhancedTableHead(props) {
         onRequestSort(event, property);
     };
     const headCells = forStatus === 'closed' ? [
-        { id: 'addressFrom', numeric: false, label: 'Address From', sortable: true},
+        { id: 'addressFrom', numeric: false, label: 'Address From'},
         { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
         { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
         { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' }
     ]: [
         { id: 'addressFrom', numeric: false, disablePadding: true, label: 'Address From', sortable: true},
         { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
-        { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time' },
+        { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time', sortable: true },
         { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' },
         { id: 'actions', numeric: false, disablePadding: true, label: 'Actions', align: 'center'}
     ];
@@ -307,6 +323,13 @@ const useStyles = makeStyles(theme => ({
     cancelFab: {
         backgroundColor: red[600],
         color: '#fff'
+    },
+    drawerHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        ...theme.mixins.toolbar,
+        justifyContent: 'center',
     }
 }));
 
@@ -319,7 +342,12 @@ export default function DriverOrdersTableCustomized(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
-    const [performedAction, setPerformedAction] = React.useState('');
+
+    let performedAction = '';
+
+    const setPerformedAction = action => {
+        performedAction = action;
+    };
 
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
@@ -340,7 +368,7 @@ export default function DriverOrdersTableCustomized(props) {
     const onOpenedOrdersLoaded = (response) => {
         const rows = response.map((row) => {
 
-            return createData(row.order.id, row.order.addressFrom, row.order.addressTo, getFormattedDateFromISOString(row.order.appointmentDate),
+            return createData(row.order.id, row.order.addressFrom, row.order.addressTo, row.order.appointmentDate,
                 getUserFullName(row.order.client));
         });
         setDataRows(rows);
@@ -352,6 +380,7 @@ export default function DriverOrdersTableCustomized(props) {
     };
 
     useEffect(() => {
+        if (dataRows == null)
         makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
     }, []);
 
@@ -488,74 +517,84 @@ export default function DriverOrdersTableCustomized(props) {
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders} selected={selected}
-                    refuseOrders={refuseOrders} forStatus={statuses} assignOrders={assignOrders} completeOrders={completeOrders}/>
-                <TableContainer>
-                    <Table
-                        className={classes.table}
-                        aria-labelledby="tableTitle"
-                        size={'medium'}
-                        aria-label="enhanced table"
-                    >
-                        <EnhancedTableHead
-                            classes={classes}
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={dataRows ? dataRows.length : 0}
-                            forStatus={statuses}
-                        />
-                        <TableBody>
-                            {stableSort(dataRows || [], getSorting(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const isItemSelected = isSelected(row.id);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
+            {dataRows === null ?
 
-                                    return (
-                                        <TableRow
-                                            hover
-                                            onClick={event => handleClick(event, row.id)}
-                                            role="checkbox"
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={row.id}
-                                            selected={isItemSelected}
-                                        >
-                                            {getCheckboxCell(classes, isItemSelected, labelId)}
-                                            <TableCell component="th" id={labelId} scope="row" className={classes.tableCell}>
-                                                {row.addressFrom}
-                                            </TableCell>
-                                            <TableCell align="left" className={classes.tableCell}>{row.addressTo}</TableCell>
-                                            <TableCell align="right" className={classes.tableCell}>{row.appointmentTime}</TableCell>
-                                            <TableCell align="center" className={classes.tableCell}>{row.client}</TableCell>
+                <div className={classes.drawerHeader}><CircularProgress/></div> :
+                <Paper className={classes.paper}>
+                    <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders}
+                                          selected={selected}
+                                          refuseOrders={refuseOrders} forStatus={statuses} assignOrders={assignOrders}
+                                          completeOrders={completeOrders}/>
+                    <TableContainer>
+                        <Table
+                            className={classes.table}
+                            aria-labelledby="tableTitle"
+                            size={'medium'}
+                            aria-label="enhanced table"
+                        >
+                            <EnhancedTableHead
+                                classes={classes}
+                                numSelected={selected.length}
+                                order={order}
+                                orderBy={orderBy}
+                                onSelectAllClick={handleSelectAllClick}
+                                onRequestSort={handleRequestSort}
+                                rowCount={dataRows ? dataRows.length : 0}
+                                forStatus={statuses}
+                            />
+                            <TableBody>
+                                {stableSort(dataRows || [], getSorting(order, orderBy))
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row, index) => {
+                                        const isItemSelected = isSelected(row.id);
+                                        const labelId = `enhanced-table-checkbox-${index}`;
 
-                                            {getActionsCellValue(row.id)}
+                                        return (
+                                            <TableRow
+                                                hover
+                                                onClick={event => handleClick(event, row.id)}
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={row.id}
+                                                selected={isItemSelected}
+                                            >
+                                                {getCheckboxCell(classes, isItemSelected, labelId)}
+                                                <TableCell component="th" id={labelId} scope="row"
+                                                           className={classes.tableCell}>
+                                                    {row.addressFrom}
+                                                </TableCell>
+                                                <TableCell align="left"
+                                                           className={classes.tableCell}>{row.addressTo}</TableCell>
+                                                <TableCell align="right"
+                                                           className={classes.tableCell}>{getFormattedDateFromISOString(row.appointmentTime)}</TableCell>
+                                                <TableCell align="center"
+                                                           className={classes.tableCell}>{row.client}</TableCell>
 
-                                        </TableRow>
-                                    );
-                                })}
-                            {getEmptyRows(dataRows) > 0 && (
-                                <TableRow style={{ height: (33) * getEmptyRows(dataRows) }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={(dataRows || []).length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
-            </Paper>
+                                                {getActionsCellValue(row.id)}
+
+                                            </TableRow>
+                                        );
+                                    })}
+                                {getEmptyRows(dataRows) > 0 && (
+                                    <TableRow style={{height: (33) * getEmptyRows(dataRows)}}>
+                                        <TableCell colSpan={6}/>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={(dataRows || []).length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={handleChangePage}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                    />
+                </Paper>
+            }
         </div>
     );
 }
