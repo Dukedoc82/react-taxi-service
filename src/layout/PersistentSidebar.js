@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom'
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -86,6 +86,7 @@ const useStyles = makeStyles(theme => ({
 export default function PersistentDrawerLeft(props) {
     const classes = useStyles();
     const theme = useTheme();
+    const {open, handleDrawerClose, setApplicationBarTitle} = props;
 
     const onSuccessLogout = () => {
         localStorage.removeItem("userToken");
@@ -97,18 +98,26 @@ export default function PersistentDrawerLeft(props) {
         makeGetCall("/doLogout", onSuccessLogout);
     };
 
-    const handleClick = (index) => {
-        if (index === 'driverDashboard') {
+    const handleClick = (menuTitle) => {
+        setApplicationBarTitle(menuTitle.text);
+        if (menuTitle.id === 'driverDashboard') {
             ReactDOM.render(<DriverTabPanel />, document.getElementById('mainContent'));
-        } else if (index === 'userDashboard') {
+        } else if (menuTitle.id === 'userDashboard') {
             ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
         }
     };
 
-    let menuTitles = [{id: 'userDashboard', text: 'My Orders'}];
+    const driverDashboardMenuItem = {id: 'driverDashboard', text: 'Driver Dashboard'};
+    const clientDashboardMenuItem = {id: 'userDashboard', text: 'Client Dashboard'};
+    let menuTitles = [clientDashboardMenuItem];
     let userData = JSON.parse(localStorage.getItem('userData'));
     if (userData.uri.indexOf("/driver/") !== -1)
-        menuTitles.push({id: 'driverDashboard', text: 'Driver Dashboard'});
+        menuTitles.push(driverDashboardMenuItem);
+
+
+    useEffect(() => {
+        setApplicationBarTitle(menuTitles[0].text);
+    }, [])
 
     return (
         <div className={classes.root}>
@@ -117,7 +126,7 @@ export default function PersistentDrawerLeft(props) {
                 className={classes.drawer}
                 variant="persistent"
                 anchor="left"
-                open={props.open}
+                open={open}
                 classes={{
                     paper: classes.drawerPaper,
                 }}
@@ -127,14 +136,14 @@ export default function PersistentDrawerLeft(props) {
                     <div>
                         User Name
                     </div>
-                    <IconButton onClick={(e) => props.handleDrawerClose(e)}>
+                    <IconButton onClick={(e) => handleDrawerClose(e)}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </div>
                 <Divider />
                 <List>
                     {menuTitles.map((menuTitle) => (
-                        <ListItem button key={menuTitle.id} onClick={() => {handleClick(menuTitle.id)}}>
+                        <ListItem button key={menuTitle.id} onClick={() => {handleClick(menuTitle)}}>
                             <ListItemIcon><Avatar className={classes.avatar}><LocalTaxi/></Avatar></ListItemIcon>
                             <ListItemText primary={menuTitle.text} />
                         </ListItem>
@@ -152,7 +161,7 @@ export default function PersistentDrawerLeft(props) {
             </Drawer>
             <main
                 className={clsx(classes.content, {
-                    [classes.contentShift]: props.open,
+                    [classes.contentShift]: open,
                 })}
             >
 
