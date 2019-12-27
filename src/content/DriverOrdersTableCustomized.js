@@ -325,7 +325,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
     },
     hiddenDiv: {
-        hidden: true
+        display: 'none'
     }
 }));
 
@@ -362,7 +362,8 @@ export default function DriverOrdersTableCustomized(props) {
             selectedChangeHandler(selected);
     };
 
-    const onOpenedOrdersLoaded = useCallback((response) => {
+    let onOpenedOrdersLoaded;
+    onOpenedOrdersLoaded = useCallback((response) => {
         const rows = response.map((row) => {
 
             return createData(row.order.id, row.order.addressFrom, row.order.addressTo, row.order.appointmentDate,
@@ -589,7 +590,7 @@ export default function DriverOrdersTableCustomized(props) {
                     />
                 </Paper>
             }
-            <div className={classes.hiddenDiv} ref={performedAction}></div>
+            <div className={classes.hiddenDiv} ref={performedAction}/>
         </div>
     );
 }
