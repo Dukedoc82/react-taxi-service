@@ -16,7 +16,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
-import {getUserFullName} from "../utils/DataUtils";
+import {byClasses, getUserFullName} from "../utils/DataUtils";
 import {lightBlue, green, red, blue} from '@material-ui/core/colors'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import CheckOutlined from '@material-ui/icons/CheckOutlined';
@@ -30,9 +30,6 @@ function createData(id, addressFrom, addressTo, appointmentTime, client, status)
 }
 
 function desc(a, b, orderBy) {
-    console.log(a);
-    console.log(b);
-    console.log(orderBy);
     if (orderBy === 'appointmentTime') {
         let aDate = new Date(a[orderBy]);
         let bDate = new Date(b[orderBy]);
@@ -94,7 +91,7 @@ function EnhancedTableHead(props) {
                 onChange={onSelectAllClick}
                 inputProps={{ 'aria-label': 'select all desserts' }}
             />
-        </TableCell>) : '';
+        </TableCell>) : null;
     };
 
     return (
@@ -202,10 +199,6 @@ const useToolbarStyles = makeStyles(theme => ({
         'min-height': '0px !important'
     }
 }));
-
-const byClasses = classes => {
-    return classes.join(' ');
-};
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
@@ -512,7 +505,7 @@ export default function DriverOrdersTableCustomized(props) {
                 checked={isItemSelected}
                 inputProps={{ 'aria-labelledby': labelId }}
             />
-        </TableCell>) : '';
+        </TableCell>) : null;
     };
 
     return (
@@ -557,8 +550,7 @@ export default function DriverOrdersTableCustomized(props) {
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
                                                 key={row.id}
-                                                selected={isItemSelected}
-                                            >
+                                                selected={isItemSelected}>
                                                 {getCheckboxCell(classes, isItemSelected, labelId)}
                                                 <TableCell component="th" id={labelId} scope="row"
                                                            className={classes.tableCell}>
@@ -570,9 +562,7 @@ export default function DriverOrdersTableCustomized(props) {
                                                            className={classes.tableCell}>{getFormattedDateFromISOString(row.appointmentTime)}</TableCell>
                                                 <TableCell align="center"
                                                            className={classes.tableCell}>{row.client}</TableCell>
-
                                                 {getActionsCellValue(row.id)}
-
                                             </TableRow>
                                         );
                                     })}

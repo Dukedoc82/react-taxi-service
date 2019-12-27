@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import PersistentSidebar from './PersistentSidebar'
 import {SwipeableSidebar} from "./SwipableSidebar";
 
 const useStyles = makeStyles(theme => ({
@@ -23,14 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ApplicationBar() {
     const classes = useStyles();
-    const [verticalMenuOpened, setVerticalMenuOpened] = useState(false);
     const [applicationBarTitle, setApplicationBarTitle] = useState('');
-
-    const onMenuClicked = (event) => {
-        event.preventDefault();
-        //setVerticalMenuOpened(!verticalMenuOpened);
-        sidebarRef.current.toggle();
-    };
 
     const sidebarRef = useRef();
 

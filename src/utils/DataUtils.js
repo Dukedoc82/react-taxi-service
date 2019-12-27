@@ -36,3 +36,7 @@ function createTooltip(title, iconPath, iconColor) {
         </Tooltip>
     )
 }
+
+export const byClasses = classes => {
+    return classes.join(' ');
+};

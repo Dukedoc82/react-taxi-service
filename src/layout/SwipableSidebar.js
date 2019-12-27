@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useImperativeHandle} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
@@ -11,19 +11,37 @@ import clsx from 'clsx';
 import {makeGetCall} from "../utils/ajaxRequest";
 import ReactDOM from "react-dom";
 import SignIn from "../login/SignIn";
-import {red, grey, yellow} from '@material-ui/core/colors'
+import {blue, red, green, grey, yellow} from '@material-ui/core/colors'
 import Icon from "@mdi/react";
-import { mdiPower, mdiCarShiftPattern, mdiTaxi } from '@mdi/js';
+import { mdiPower, mdiCarShiftPattern, mdiTaxi, mdiAccountCardDetails, mdiWrench } from '@mdi/js';
 import DriverTabPanel from "../components/DriverTabPanel";
+import {Typography} from "@material-ui/core";
+import {byClasses, getUserFullName} from "../utils/DataUtils";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     list: {
         width: 250,
     },
     fullList: {
         width: 'auto',
     },
-});
+    drawerHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        ...theme.mixins.toolbar,
+        justifyContent: 'center',
+    },
+    userNameDiv: {
+        paddingTop: 0,
+        minHeight: '1em',
+        paddingBottom: '1em'
+    },
+    userNameTypography: {
+        fontWeight: 'bold',
+        fontSize: '0.875rem'
+    }
+}));
 
 export const SwipeableSidebar = forwardRef((props, ref) => {
     const {setApplicationBarTitle} = props;
@@ -49,15 +67,6 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
         ReactDOM.render(<SignIn/>, document.getElementById('root'));
     };
 
-    const handleClick = (menuTitle) => {
-        setApplicationBarTitle(menuTitle.text);
-        if (menuTitle.id === 'driverDashboard') {
-            ReactDOM.render(<DriverTabPanel />, document.getElementById('mainContent'));
-        } else if (menuTitle.id === 'userDashboard') {
-            ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
-        }
-    };
-
     const toggleSideBar = (side, open) => {
         setState({ ...state, [side]: open });
     };
@@ -68,14 +77,36 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
     const clientDashboardMenuItem = {id: 'userDashboard', text: 'Client Dashboard', icon: <Icon path={mdiTaxi}
                                                                                                 size={1}
                                                                                                 color={yellow[700]}/>};
+    const adminDashboardMenuITem = {id: 'adminDashboard', text: 'Admin Dashboard', icon: <Icon path={mdiWrench}
+                                                                                               size={1}
+                                                                                               color={blue[700]}/> }
     let menuTitles = [clientDashboardMenuItem];
     let userData = JSON.parse(localStorage.getItem('userData'));
     if (userData.uri.indexOf("/driver/") !== -1)
         menuTitles.push(driverDashboardMenuItem);
 
+    menuTitles.push(adminDashboardMenuITem);
+
+    const [currentView, setCurrentView] = useState(menuTitles[0]);
+    
+    const getCurrentView = () => {
+        setApplicationBarTitle(currentView.text);
+        switch (currentView.id) {
+            case 'driverDashboard':
+                return <DriverTabPanel/>;
+            default:
+                return <OrdersTable/>;
+        }
+    };
+
     useEffect(() => {
         setApplicationBarTitle(menuTitles[0].text);
-    }, []);
+    }, [setApplicationBarTitle, menuTitles]);
+
+    const getUserName = () => {
+        let user = JSON.parse(localStorage.getItem('userData'));
+        return getUserFullName(user.user);
+    };
 
     const toggleDrawer = (side, open) => event => {
         if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -85,6 +116,8 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
         setState({ ...state, [side]: open });
     };
 
+    const { drawerHeader, userNameDiv, userNameTypography, content, contentShift } = classes;
+
     const sideList = side => (
         <div
             className={classes.list}
@@ -92,9 +125,20 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
             onClick={toggleDrawer(side, false)}
             onKeyDown={toggleDrawer(side, false)}
         >
+            <div className={drawerHeader}>
+                <Icon path={mdiAccountCardDetails}
+                      size={3}
+                      color={green[600]}/>
+            </div>
+            <div className={byClasses([drawerHeader, userNameDiv])}>
+                <Typography className={userNameTypography}>
+                    {getUserName()}
+                </Typography>
+            </div>
+            <Divider/>
             <List>
                 {menuTitles.map((menuTitle) => (
-                    <ListItem button key={menuTitle.id} onClick={() => {handleClick(menuTitle)}}>
+                    <ListItem button key={menuTitle.id} onClick={() => setCurrentView(menuTitle)}>
                         <ListItemIcon>{menuTitle.icon}</ListItemIcon>
                         <ListItemText primary={menuTitle.text} />
                     </ListItem>
@@ -118,14 +162,14 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
     return (
         <div>
             <main
-                className={clsx(classes.content, {
-                    [classes.contentShift]: state.left.open,
+                className={clsx(content, {
+                    [contentShift]: state.left.open,
                 })}
             >
 
                 <div id='mainContent'>
-                    <div className={classes.drawerHeader} />
-                    <OrdersTable/>
+                    <div className={drawerHeader} />
+                    {getCurrentView()}
 
                 </div>
             </main>

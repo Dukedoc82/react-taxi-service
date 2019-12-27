@@ -117,7 +117,7 @@ export default function PersistentDrawerLeft(props) {
 
     useEffect(() => {
         setApplicationBarTitle(menuTitles[0].text);
-    }, [])
+    }, []);
 
     return (
         <div className={classes.root}>
