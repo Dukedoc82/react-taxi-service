@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useContext, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -328,7 +328,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DriverOrdersTableCustomized(props) {
     const classes = useStyles();
-    const {statuses, selectedChangeHandler, changeOrdersHandler} = props;
+    const {statuses, selectedChangeHandler, changeOrdersHandler } = props;
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('appointmentTime');
     const [selected, setSelected] = React.useState(props.selected);
@@ -336,11 +336,8 @@ export default function DriverOrdersTableCustomized(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
 
-    let performedAction = useRef('');
+    const [performedAction, setPerformedAction] = useCallback('');
 
-    const setPerformedAction = useCallback((action) => {
-        performedAction.current.replace(action);
-    }, [performedAction]);
 
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
@@ -370,12 +367,12 @@ export default function DriverOrdersTableCustomized(props) {
         }
         setSelected([]);
         setPerformedAction('');
-    }, [setPerformedAction, changeOrdersHandler, performedAction]);
+    }, [setPerformedAction, changeOrdersHandler]);
 
     useEffect(() => {
         if (dataRows == null)
         makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
-    }, [dataRows, getOrdersUrl, onOpenedOrdersLoaded]);
+    }, []);
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
