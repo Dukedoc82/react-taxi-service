@@ -88,6 +88,11 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
     menuTitles.push(adminDashboardMenuITem);
 
     const [currentView, setCurrentView] = useState(menuTitles[0]);
+
+    const setView = (menuTitle) => {
+        setMyState(myState + 1);
+        setCurrentView(menuTitle);
+    }
     
     const getCurrentView = () => {
         setApplicationBarTitle(currentView.text);
@@ -99,9 +104,14 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
         }
     };
 
+    const [myState, setMyState] = useState(1);
+
     useEffect(() => {
-        setApplicationBarTitle(menuTitles[0].text);
-    }, [setApplicationBarTitle, menuTitles]);
+        if (myState === 1) {
+            setApplicationBarTitle(menuTitles[0].text);
+            setMyState(2);
+        }
+    }, [menuTitles, myState, setApplicationBarTitle]);
 
     const getUserName = () => {
         let user = JSON.parse(localStorage.getItem('userData'));
@@ -138,7 +148,7 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
             <Divider/>
             <List>
                 {menuTitles.map((menuTitle) => (
-                    <ListItem button key={menuTitle.id} onClick={() => setCurrentView(menuTitle)}>
+                    <ListItem button key={menuTitle.id} onClick={() => setView(menuTitle)}>
                         <ListItemIcon>{menuTitle.icon}</ListItemIcon>
                         <ListItemText primary={menuTitle.text} />
                     </ListItem>

@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.1.2",
+    "date-fns": "^2.8.1",
     "material-table": "^1.54.2",
     "material-ui": "^0.20.2",
     "material-ui-places": "^1.1.7",

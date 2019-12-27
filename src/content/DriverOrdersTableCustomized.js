@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -336,7 +336,11 @@ export default function DriverOrdersTableCustomized(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
 
-    const [performedAction, setPerformedAction] = useCallback('');
+    let performedAction = '';
+
+    const setPerformedAction = useCallback((action) => {
+        performedAction = action;
+    }, []);
 
 
     const getOrdersUrl = statuses === 'opened' ?
@@ -367,12 +371,12 @@ export default function DriverOrdersTableCustomized(props) {
         }
         setSelected([]);
         setPerformedAction('');
-    }, [setPerformedAction, changeOrdersHandler]);
+    }, [setPerformedAction, changeOrdersHandler, performedAction]);
 
     useEffect(() => {
         if (dataRows == null)
         makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
-    }, []);
+    }, [dataRows, getOrdersUrl, onOpenedOrdersLoaded]);
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
