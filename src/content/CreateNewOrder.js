@@ -19,6 +19,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -73,6 +74,8 @@ export default function CreateNewOrder() {
         useState(new Date(2020, 2, 8, currentTime.getHours(), currentTime.getMinutes()));
     const [addressFromError, setAddressFromError] = useState('');
     const [addressToError, setAddressToError] = useState('');
+    const [confirmDialogMessage, setConfirmDialogMessage] = useState('');
+    const confirmTitle = 'Confirm';
 
     const onAddressFromChange = (event) => {
         event.preventDefault();
@@ -87,6 +90,7 @@ export default function CreateNewOrder() {
     };
 
     const openOrdersTable = (event) => {
+        setConfirmDialogMessage('');
         event.preventDefault();
         ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
     };
@@ -218,15 +222,16 @@ export default function CreateNewOrder() {
                                 variant="contained"
                                 color="primary"
                                 className={classes.submit}
-                                onClick={openOrdersTable}
+                                onClick={() => setConfirmDialogMessage('In this case you will lose your changes.')}
                             >
                                 Cancel
                             </Button>
                         </Grid>
                     </Grid>
                     </MuiPickersUtilsProvider>
-
-
+                    <ConfirmDialog open={!!confirmDialogMessage} okHandler={openOrdersTable}
+                                   title={'Cancel new order creation?'}  message={confirmDialogMessage}
+                                   cancelHandler={() => {setConfirmDialogMessage('')}} okText='Yes' cancelText='No'/>
                 </form>
             </div>
         </Container>
