@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -323,6 +323,9 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0, 1),
         ...theme.mixins.toolbar,
         justifyContent: 'center',
+    },
+    hiddenDiv: {
+        hidden: true
     }
 }));
 
@@ -336,10 +339,10 @@ export default function DriverOrdersTableCustomized(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
 
-    let performedAction = '';
+    const performedAction = useRef(null);
 
     const setPerformedAction = useCallback((action) => {
-        performedAction = action;
+        performedAction.current.innerHTML = action;
     }, []);
 
 
@@ -586,6 +589,7 @@ export default function DriverOrdersTableCustomized(props) {
                     />
                 </Paper>
             }
+            <div className={classes.hiddenDiv} ref={performedAction}></div>
         </div>
     );
 }

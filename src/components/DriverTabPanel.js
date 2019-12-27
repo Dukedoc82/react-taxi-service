@@ -65,7 +65,7 @@ export default function DriverTabPanel() {
     const changeOpenedOrderHandler = (orders, action) => {
         setOpenedOrders(orders);
         setOpenedSelected([]);
-        if (action === 'assign')
+        if (action && action.current && action.current.innerHTML === 'assign')
             setAssignedOrders(null);
     };
 
@@ -76,9 +76,9 @@ export default function DriverTabPanel() {
     const changeAssignedOrderHandler = (orders, action) => {
         setAssignedOrders(orders);
         setAssignedSelected([]);
-        if (action === 'complete')
+        if (action && action.current && action.current.innerHTML === 'complete')
             setCompletedOrders(null);
-        if (action === 'refuse')
+        if (action && action.current && action.current.innerHTML === 'refuse')
             setOpenedOrders(null);
     };
 
