@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -338,14 +338,6 @@ export default function DriverOrdersTableCustomized(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
-
-    const performedAction = useRef(null);
-
-    const setPerformedAction = useCallback((action) => {
-        performedAction.current.innerHTML = action;
-    }, []);
-
-
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
             '/driver/assignedOrders' : statuses ==='closed' ? '/driver/completedOrders' : 'null';
@@ -362,8 +354,11 @@ export default function DriverOrdersTableCustomized(props) {
             selectedChangeHandler(selected);
     };
 
-    let onOpenedOrdersLoaded;
-    onOpenedOrdersLoaded = useCallback((response) => {
+    const setPerformedAction = action => {
+        performedAction = action;
+    };
+
+    const onOpenedOrdersLoaded = (response) => {
         const rows = response.map((row) => {
 
             return createData(row.order.id, row.order.addressFrom, row.order.addressTo, row.order.appointmentDate,
@@ -375,12 +370,7 @@ export default function DriverOrdersTableCustomized(props) {
         }
         setSelected([]);
         setPerformedAction('');
-    }, [setPerformedAction, changeOrdersHandler, performedAction]);
-
-    useEffect(() => {
-        if (dataRows == null)
-        makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
-    }, [dataRows, getOrdersUrl, onOpenedOrdersLoaded]);
+    };
 
     const handleSelectAllClick = event => {
         if (event.target.checked) {
@@ -435,22 +425,21 @@ export default function DriverOrdersTableCustomized(props) {
 
             return (<TableCell align="center" className={classes.statusCell}>
                 <div className={classes.buttonDiv}>
-                <Tooltip title="Refuse">
-                    <div className={classes.statusDiv}>
-                        <Fab size='small' className={classes.cancelFab + ' ' + classes.smallButton} onClick={(e) => refuseOrder(e, rowId)}><ClearOutlined/></Fab>
-                    </div>
-                </Tooltip>
-                <Tooltip title="Complete">
-                    <div className={classes.statusDiv}>
-                        <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => completeOrder(e, rowId)}><CheckOutlined/></Fab>
-                    </div>
-                </Tooltip>
+                    <Tooltip title="Refuse">
+                        <div className={classes.statusDiv}>
+                            <Fab size='small' className={classes.cancelFab + ' ' + classes.smallButton} onClick={(e) => refuseOrder(e, rowId)}><ClearOutlined/></Fab>
+                        </div>
+                    </Tooltip>
+                    <Tooltip title="Complete">
+                        <div className={classes.statusDiv}>
+                            <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => completeOrder(e, rowId)}><CheckOutlined/></Fab>
+                        </div>
+                    </Tooltip>
                 </div>
             </TableCell>)
 
         }
     };
-
 
     const getEmptyRows = (rows) => {
         return rows ?
@@ -512,6 +501,12 @@ export default function DriverOrdersTableCustomized(props) {
             />
         </TableCell>) : null;
     };
+
+    let performedAction = '';
+
+    if (dataRows == null) {
+        makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
+    }
 
     return (
         <div className={classes.root}>
@@ -590,7 +585,13 @@ export default function DriverOrdersTableCustomized(props) {
                     />
                 </Paper>
             }
-            <div className={classes.hiddenDiv} ref={performedAction}/>
         </div>
     );
+};
+
+DriverOrdersTableCustomized.propTypes = {
+    statuses: PropTypes.any.isRequired,
+    orders: PropTypes.arrayOf(PropTypes.object),
+    selectedChangeHandler: PropTypes.func,
+    changeOrdersHandler: PropTypes.func
 }

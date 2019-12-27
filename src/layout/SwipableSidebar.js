@@ -16,6 +16,7 @@ import Icon from "@mdi/react";
 import { mdiPower, mdiCarShiftPattern, mdiTaxi, mdiAccountCardDetails, mdiWrench } from '@mdi/js';
 import DriverTabPanel from "../components/DriverTabPanel";
 import {Typography} from "@material-ui/core";
+import PropTypes from 'prop-types'
 import {byClasses, getUserFullName} from "../utils/DataUtils";
 
 const useStyles = makeStyles(theme => ({
@@ -193,3 +194,7 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
         </div>
     );
 });
+
+SwipeableSidebar.propTypes = {
+    setApplicationBarTitle: PropTypes.any.isRequired
+}

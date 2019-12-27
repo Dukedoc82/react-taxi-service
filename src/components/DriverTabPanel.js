@@ -65,7 +65,7 @@ export default function DriverTabPanel() {
     const changeOpenedOrderHandler = (orders, action) => {
         setOpenedOrders(orders);
         setOpenedSelected([]);
-        if (action && action.current && action.current.innerHTML === 'assign')
+        if (action === 'assign')
             setAssignedOrders(null);
     };
 
@@ -76,9 +76,9 @@ export default function DriverTabPanel() {
     const changeAssignedOrderHandler = (orders, action) => {
         setAssignedOrders(orders);
         setAssignedSelected([]);
-        if (action && action.current && action.current.innerHTML === 'complete')
+        if (action === 'complete')
             setCompletedOrders(null);
-        if (action && action.current && action.current.innerHTML === 'refuse')
+        if (action === 'refuse')
             setOpenedOrders(null);
     };
 
@@ -100,7 +100,8 @@ export default function DriverTabPanel() {
     return (
         <div className={classes.root}>
             <AppBar position="static">
-                <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered={true} variant={'fullWidth'} >
+                <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered={true}
+                      variant={'fullWidth'} >
                     <Tab label="Client Requests" {...a11yProps(0)} />
                     <Tab label="Assigned to Me" {...a11yProps(1)} />
                     <Tab label="Closed Requests" {...a11yProps(2)} />
@@ -109,15 +110,19 @@ export default function DriverTabPanel() {
             <TabPanel value={value} index={0}>
                 <DriverOrdersTableCustomized statuses={"opened"} orders={openedOrder}
                                              changeOrdersHandler={changeOpenedOrderHandler} selected={openedSelected}
-                                             selectedChangeHandler={changeOpenedSelectedHandler} loading={true}/>
+                                             selectedChangeHandler={changeOpenedSelectedHandler}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <DriverOrdersTableCustomized statuses={"assigned"} orders={assignedOrders} changeOrdersHandler={changeAssignedOrderHandler}
-                                             selected={assignedSelected} selectedChangeHandler={changeAssignedSelectedHandler} loading={true}/>
+                <DriverOrdersTableCustomized statuses={"assigned"} orders={assignedOrders}
+                                             changeOrdersHandler={changeAssignedOrderHandler}
+                                             selected={assignedSelected}
+                                             selectedChangeHandler={changeAssignedSelectedHandler}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <DriverOrdersTableCustomized statuses={"closed"} orders={completedOrders} changeOrdersHandler={changeCompletedOrderHandler}
-                                             selected={completedSelected} selectedChangeHandler={changeCompletedSelectedHandler} loading={true}/>
+                <DriverOrdersTableCustomized statuses={"closed"} orders={completedOrders}
+                                             changeOrdersHandler={changeCompletedOrderHandler}
+                                             selected={completedSelected}
+                                             selectedChangeHandler={changeCompletedSelectedHandler}/>
         </TabPanel>
         </div>
     );
