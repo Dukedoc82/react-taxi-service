@@ -53,4 +53,4 @@ ConfirmDialog.propTypes = {
     message: PropTypes.string.isRequired,
     okText: PropTypes.string,
     cancelText: PropTypes.string
-}
+};

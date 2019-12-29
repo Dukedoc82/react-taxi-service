@@ -5,14 +5,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import { green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { validateIsNotEmpty } from "../utils/ValidationUtils";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
-import OrdersTable from './OrdersTable'
+import OrdersTable from './OrdersTable';
+import PostAddIcon from '@material-ui/icons/PostAdd';
 import {
     MuiPickersUtilsProvider,
     KeyboardTimePicker,
@@ -75,7 +75,6 @@ export default function CreateNewOrder() {
     const [addressFromError, setAddressFromError] = useState('');
     const [addressToError, setAddressToError] = useState('');
     const [confirmDialogMessage, setConfirmDialogMessage] = useState('');
-    const confirmTitle = 'Confirm';
 
     const onAddressFromChange = (event) => {
         event.preventDefault();
@@ -138,7 +137,7 @@ export default function CreateNewOrder() {
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
+                    <PostAddIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     New order

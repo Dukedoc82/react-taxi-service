@@ -11,10 +11,11 @@ import Paper from '@material-ui/core/Paper';
 import {makeGetCall} from "../utils/ajaxRequest";
 import { green } from '@material-ui/core/colors';
 import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
+import PostAddIcon from '@material-ui/icons/PostAdd';
 import CreateNewOrder from './CreateNewOrder'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
+import {Tooltip} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -50,9 +51,25 @@ export default function SimpleTable() {
 
     }, []);
 
-    const onDataLoaded = (response) => {
-        setDataRows(response);
+    const compare = (order1, order2) => {
+        if (order1.status.titleKey === 'tp.status.completed' && order2.status.titleKey !== 'tp.status.completed') {
+            return 1;
+        } else if (order2.status.titleKey === 'tp.status.completed' && order1.status.titleKey !== 'tp.status.completed') {
+            return -1;
+        } else {
+            let date1 = new Date(order1.order.appointmentDate);
+            let date2 = new Date(order2.order.appointmentDate);
+            if (date1 > date2)
+                return 1;
+            else if (date2 > date1)
+                return -1;
+            else return 0;
+        }
 
+    };
+
+    const onDataLoaded = (response) => {
+        setDataRows(response.sort(compare));
     };
 
     const showCreateOrderDialog = (event) => {
@@ -64,7 +81,9 @@ export default function SimpleTable() {
         <div>
             <div className={classes.drawerHeader}>
                 <Fab color="primary" aria-label="add" className={classes.addFab} onClick={(e)=> showCreateOrderDialog(e)}>
-                    <AddIcon />
+                    <Tooltip title='Create new order'>
+                    <PostAddIcon/>
+                    </Tooltip>
                 </Fab>
             </div>
         <TableContainer component={Paper}>
