@@ -594,4 +594,4 @@ DriverOrdersTableCustomized.propTypes = {
     orders: PropTypes.arrayOf(PropTypes.object),
     selectedChangeHandler: PropTypes.func,
     changeOrdersHandler: PropTypes.func
-}
+};

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -8,14 +8,16 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import {makeGetCall} from "../utils/ajaxRequest";
-import { green } from '@material-ui/core/colors';
+import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
+import { green, red } from '@material-ui/core/colors';
 import Fab from '@material-ui/core/Fab';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import CreateNewOrder from './CreateNewOrder'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import {Tooltip} from "@material-ui/core";
+import ClearIcon from '@material-ui/icons/Clear';
+import AlertDialog from "../components/AlertDialog";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -38,23 +40,55 @@ const useStyles = makeStyles(theme => ({
     },
     tableHeader: {
         'font-weight': 'bold'
+    },
+
+    cancelFab: {
+        backgroundColor: red[600],
+        color: '#fff',
+        boxShadow: 'none'
+    },
+    statusDiv: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        ...theme.mixins.toolbar,
+        justifyContent: 'center',
+        'min-height': '0px !important'
+    },
+    smallButton: {
+        height: '24px',
+        width: '24px',
+        minWidth: '24px',
+        minHeight: '24px'
+    },
+    clearIcon: {
+        height: '20px',
+        width: '20px'
     }
 }));
 
 export default function SimpleTable() {
     const classes = useStyles();
-    const [dataRows, setDataRows] = useState([]);
-
-    useEffect(() => {
-
-            makeGetCall("/order/", onDataLoaded);
-
-    }, []);
+    const [dataRows, setDataRows] = useState(null);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const compare = (order1, order2) => {
+        if (order1.status.titleKey === 'tp.status.completed' && order2.status.titleKey === 'tp.status.cancelled') {
+            return 1;
+        }
+        if (order2.status.titleKey === 'tp.status.completed' && order1.status.titleKey === 'tp.status.cancelled') {
+            return -1;
+        }
         if (order1.status.titleKey === 'tp.status.completed' && order2.status.titleKey !== 'tp.status.completed') {
             return 1;
-        } else if (order2.status.titleKey === 'tp.status.completed' && order1.status.titleKey !== 'tp.status.completed') {
+        }
+        if (order2.status.titleKey === 'tp.status.completed' && order1.status.titleKey !== 'tp.status.completed') {
+            return -1;
+        }
+        if (order1.status.titleKey === 'tp.status.cancelled' && order2.status.titleKey !== 'tp.status.cancelled') {
+            return 1;
+        }
+        if (order2.status.titleKey === 'tp.status.cancelled' && order1.status.titleKey !== 'tp.status.cancelled') {
             return -1;
         } else {
             let date1 = new Date(order1.order.appointmentDate);
@@ -65,7 +99,18 @@ export default function SimpleTable() {
                 return -1;
             else return 0;
         }
+    };
 
+    const onCancelSuccess = () => {
+        makeGetCall("/order/", onDataLoaded);
+    };
+
+    const onCancelError = (response) => {
+        setErrorMsg(response.message.replace('tp.status.cancelled', 'cancelled').replace('tp.status.completed', 'completed'));
+    };
+
+    const cancelOrder = (event, orderId) => {
+        makePutCall("/order/cancel/" + orderId, null, onCancelSuccess, onCancelError);
     };
 
     const onDataLoaded = (response) => {
@@ -77,6 +122,27 @@ export default function SimpleTable() {
         ReactDOM.render(<CreateNewOrder/>, document.getElementById('mainContent'));
     };
 
+    const getActionView = (order) => {
+        let status = order.status.titleKey;
+        return !(status === 'tp.status.completed' || status === 'tp.status.cancelled') ?
+            <Tooltip title="Cancel Order">
+                <div className={classes.statusDiv}>
+                    <Fab size='small' className={classes.cancelFab + ' ' + classes.smallButton}
+                            onClick={(e) => cancelOrder(e, order.order.id)}>
+                        <ClearIcon className={classes.clearIcon}/>
+                    </Fab>
+                </div>
+            </Tooltip>
+           : '';
+    };
+
+    const onAlertClose = () => {
+        setErrorMsg('');
+    };
+
+    if (dataRows === null)
+        makeGetCall("/order/", onDataLoaded);
+
     return (
         <div>
             <div className={classes.drawerHeader}>
@@ -86,32 +152,38 @@ export default function SimpleTable() {
                     </Tooltip>
                 </Fab>
             </div>
-        <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                    <TableRow >
-                        <TableCell className={classes.tableHeader}>Address From</TableCell>
-                        <TableCell className={classes.tableHeader}>Address To</TableCell>
-                        <TableCell align="right" className={classes.tableHeader}>Appointment Time</TableCell>
-                        <TableCell align="center" className={classes.tableHeader}>Driver</TableCell>
-                        <TableCell align="center" className={classes.tableHeader}>Status</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {dataRows.map(row => (
-                        <TableRow key={row.order.id}>
-                            <TableCell component="th" scope="row">
-                                {row.order.addressFrom}
-                            </TableCell>
-                            <TableCell>{row.order.addressTo}</TableCell>
-                            <TableCell align="right">{getFormattedDateFromISOString(row.order.appointmentDate)}</TableCell>
-                            <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
-                            <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+            {dataRows !== null ? (
+                <TableContainer component={Paper}>
+                    <Table className={classes.table} aria-label="simple table">
+                        <TableHead>
+                            <TableRow >
+                                <TableCell className={classes.tableHeader}>Address From</TableCell>
+                                <TableCell className={classes.tableHeader}>Address To</TableCell>
+                                <TableCell align="right" className={classes.tableHeader}>Appointment Time</TableCell>
+                                <TableCell align="center" className={classes.tableHeader}>Driver</TableCell>
+                                <TableCell align="center" className={classes.tableHeader}>Status</TableCell>
+                                <TableCell align="center" className={classes.tableHeader}>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {dataRows.map(row => (
+                                <TableRow key={row.order.id}>
+                                    <TableCell component="th" scope="row">
+                                        {row.order.addressFrom}
+                                    </TableCell>
+                                    <TableCell>{row.order.addressTo}</TableCell>
+                                    <TableCell align="right">{getFormattedDateFromISOString(row.order.appointmentDate)}</TableCell>
+                                    <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
+                                    <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
+                                    <TableCell align="center">{getActionView(row)}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ): <div> </div>}
+
+            <AlertDialog open={!!errorMsg} handleClose={onAlertClose} message={errorMsg}/>
         </div>
     );
 }
