@@ -13,3 +13,11 @@ tr, td, th {
     padding: 5px;
     margin: 0px;
 }
+
+div[role="presentation"] {
+    left: 5px;
+}
+
+div.MuiDialog-paperWidthSm {
+    max-width: 100%;
+}

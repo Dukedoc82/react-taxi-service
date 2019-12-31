@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import ReactDOM from 'react-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,12 +11,12 @@ import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import { green, red } from '@material-ui/core/colors';
 import Fab from '@material-ui/core/Fab';
 import PostAddIcon from '@material-ui/icons/PostAdd';
-import CreateNewOrder from './CreateNewOrder'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import {Tooltip} from "@material-ui/core";
 import ClearIcon from '@material-ui/icons/Clear';
 import AlertDialog from "../components/AlertDialog";
+import CreateOrderDialog from "./CreateOrderDialog";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -71,6 +70,7 @@ export default function SimpleTable() {
     const classes = useStyles();
     const [dataRows, setDataRows] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
+    const [stateStatus, setStateStatus] = useState('display');
 
     const compare = (order1, order2) => {
         if (order1.status.titleKey === 'tp.status.completed' && order2.status.titleKey === 'tp.status.cancelled') {
@@ -119,7 +119,8 @@ export default function SimpleTable() {
 
     const showCreateOrderDialog = (event) => {
         event.preventDefault();
-        ReactDOM.render(<CreateNewOrder/>, document.getElementById('mainContent'));
+        //ReactDOM.render(<CreateNewOrder/>, document.getElementById('mainContent'));
+        setStateStatus('create');
     };
 
     const getActionView = (order) => {
@@ -140,10 +141,21 @@ export default function SimpleTable() {
         setErrorMsg('');
     };
 
+    const handleModalClose = () => {
+        setStateStatus('display');
+    };
+
+    const onOrderCreate = () => {
+        setStateStatus('display');
+        makeGetCall('/order/', onDataLoaded);
+    };
+
     if (dataRows === null)
         makeGetCall("/order/", onDataLoaded);
 
     return (
+
+
         <div>
             <div className={classes.drawerHeader}>
                 <Fab color="primary" aria-label="add" className={classes.addFab} onClick={(e)=> showCreateOrderDialog(e)}>
@@ -180,8 +192,13 @@ export default function SimpleTable() {
                             ))}
                         </TableBody>
                     </Table>
+
+                        <CreateOrderDialog open={stateStatus==='create'} onCancel={handleModalClose} onCreate={onOrderCreate}/>
+
                 </TableContainer>
+
             ): <div> </div>}
+
 
             <AlertDialog open={!!errorMsg} handleClose={onAlertClose} message={errorMsg}/>
         </div>

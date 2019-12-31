@@ -9,9 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { validateIsNotEmpty } from "../utils/ValidationUtils";
-import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
-import OrdersTable from './OrdersTable';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import {
     MuiPickersUtilsProvider,
@@ -20,6 +18,11 @@ import {
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import ConfirmDialog from "../components/ConfirmDialog";
+import {PropTypes} from "prop-types";
+import {Dialog} from "@material-ui/core";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Slide from "@material-ui/core/Slide";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -57,10 +60,23 @@ const useStyles = makeStyles(theme => ({
     message: {
         display: 'flex',
         alignItems: 'center',
+    },
+    container: {
+        backgroundColor: '#fff',
+        paddingTop: '1em',
+        position: 'absolute',
+        top: '5%',
+        left: '35%',
+        paddingBottom: '1em'
     }
 }));
 
-export default function CreateNewOrder() {
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="down" ref={ref} {...props} />;
+});
+
+export default function CreateNewOrder(props) {
+    const { onClose, open } = props;
     const ADDRESS_FROM_ERR_MSG = 'Specify the address where you\'re going from.';
     const ADDRESS_TO_ERR_MSG = 'Specify the address where you\'re going to.';
 
@@ -91,11 +107,14 @@ export default function CreateNewOrder() {
     const openOrdersTable = (event) => {
         setConfirmDialogMessage('');
         event.preventDefault();
-        ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
+        if (onClose)
+            onClose();
     };
 
     const onSuccessCreate = () => {
-        ReactDOM.render(<OrdersTable/>, document.getElementById('mainContent'));
+        if (onClose) {
+            onClose();
+        }
     };
 
     const onCorrectAddressFrom = () => {
@@ -133,7 +152,10 @@ export default function CreateNewOrder() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Dialog open={open} onClose={onClose} TransitionComponent={Transition} keepMounted>
+            <DialogContent>
+                <p>asdasdc zdlkasmkdlmaslkd asdl;masl;dm;asldmk;asmdklasmldk sdmas;kdm;asmd;lasmd;l</p>
+        <Container component="main" className={classes.container}>
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -234,5 +256,17 @@ export default function CreateNewOrder() {
                 </form>
             </div>
         </Container>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    {'OK'}
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
-}
+};
+
+CreateNewOrder.propTypes = {
+    onClose: PropTypes.func
+
+};
