@@ -17,6 +17,7 @@ import {Tooltip} from "@material-ui/core";
 import ClearIcon from '@material-ui/icons/Clear';
 import AlertDialog from "../components/AlertDialog";
 import CreateOrderDialog from "./CreateOrderDialog";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -119,7 +120,6 @@ export default function SimpleTable() {
 
     const showCreateOrderDialog = (event) => {
         event.preventDefault();
-        //ReactDOM.render(<CreateNewOrder/>, document.getElementById('mainContent'));
         setStateStatus('create');
     };
 
@@ -141,6 +141,12 @@ export default function SimpleTable() {
         setErrorMsg('');
     };
 
+    const getNewOrderDialog = () => {
+        return stateStatus === 'create' ?
+            (<CreateOrderDialog open={true} onCancel={handleModalClose} onCreate={onOrderCreate}/>)
+            : '';
+    };
+
     const handleModalClose = () => {
         setStateStatus('display');
     };
@@ -154,9 +160,8 @@ export default function SimpleTable() {
         makeGetCall("/order/", onDataLoaded);
 
     return (
-
-
         <div>
+            <CssBaseline/>
             <div className={classes.drawerHeader}>
                 <Fab color="primary" aria-label="add" className={classes.addFab} onClick={(e)=> showCreateOrderDialog(e)}>
                     <Tooltip title='Create new order'>
@@ -192,14 +197,9 @@ export default function SimpleTable() {
                             ))}
                         </TableBody>
                     </Table>
-
-                        <CreateOrderDialog open={stateStatus==='create'} onCancel={handleModalClose} onCreate={onOrderCreate}/>
-
+                    {getNewOrderDialog()}
                 </TableContainer>
-
             ): <div> </div>}
-
-
             <AlertDialog open={!!errorMsg} handleClose={onAlertClose} message={errorMsg}/>
         </div>
     );

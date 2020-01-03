@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,7 +7,6 @@ import {PropTypes} from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from '@material-ui/core/styles';
 import {green} from "@material-ui/core/colors";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import Typography from "@material-ui/core/Typography";
@@ -149,9 +148,8 @@ export default function CreateOrderDialog(props) {
 
     return (
         <div>
-            <Dialog open={open} aria-labelledby="form-dialog-title" >
+            <Dialog open={open} aria-labelledby="form-dialog-title">
                 <DialogContent>
-                        <CssBaseline />
                         <div className={classes.paper}>
                             <Avatar className={classes.avatar}>
                                 <PostAddIcon/>
@@ -220,18 +218,6 @@ export default function CreateOrderDialog(props) {
                                                 }}
                                             />
                                         </Grid>
-
-                                        <Grid item xs={6}>
-                                            <Button
-                                                type="submit"
-                                                fullWidth
-                                                variant="contained"
-                                                color="primary"
-                                                className={classes.submit}
-                                            >
-                                                Create Order
-                                            </Button>
-                                        </Grid>
                                         <Grid item xs={6}>
                                             <Button
                                                 fullWidth
@@ -241,6 +227,17 @@ export default function CreateOrderDialog(props) {
                                                 onClick={() => setConfirmDialogMessage('In this case you will lose your changes.')}
                                             >
                                                 Cancel
+                                            </Button>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Button
+                                                type="submit"
+                                                fullWidth
+                                                variant="contained"
+                                                color="primary"
+                                                className={classes.submit}
+                                            >
+                                                Create Order
                                             </Button>
                                         </Grid>
                                     </Grid>

@@ -80,7 +80,7 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
                                                                                                 color={yellow[700]}/>};
     const adminDashboardMenuITem = {id: 'adminDashboard', text: 'Admin Dashboard', icon: <Icon path={mdiWrench}
                                                                                                size={1}
-                                                                                               color={blue[700]}/> }
+                                                                                               color={blue[700]}/> };
     let menuTitles = [clientDashboardMenuItem];
     let userData = JSON.parse(localStorage.getItem('userData'));
     if (userData.uri.indexOf("/driver/") !== -1)
@@ -93,13 +93,15 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
     const setView = (menuTitle) => {
         setMyState(myState + 1);
         setCurrentView(menuTitle);
-    }
+    };
     
     const getCurrentView = () => {
         setApplicationBarTitle(currentView.text);
         switch (currentView.id) {
             case 'driverDashboard':
                 return <DriverTabPanel/>;
+            case 'adminDashboard':
+                return <OrdersTable/>;
             default:
                 return <OrdersTable/>;
         }
@@ -178,10 +180,8 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
                 })}
             >
 
-                <div id='mainContent'>
-                    <div className={drawerHeader} />
+                <div id='mainContent' style={{padding: '2em 2em 1em 2em'}}>
                     {getCurrentView()}
-
                 </div>
             </main>
             <SwipeableDrawer
@@ -197,4 +197,4 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
 
 SwipeableSidebar.propTypes = {
     setApplicationBarTitle: PropTypes.any.isRequired
-}
+};
