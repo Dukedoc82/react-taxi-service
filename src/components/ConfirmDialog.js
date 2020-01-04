@@ -26,6 +26,7 @@ export default function ConfirmDialog(props) {
             keepMounted
             aria-labelledby="alert-dialog-slide-title"
             aria-describedby="alert-dialog-slide-description"
+            onEscapeKeyDown={cancelHandler}
         >
             {getDialogTitle(title)}
             <DialogContent>

@@ -18,6 +18,7 @@ import DriverTabPanel from "../components/DriverTabPanel";
 import {Typography} from "@material-ui/core";
 import PropTypes from 'prop-types'
 import {byClasses, getUserFullName} from "../utils/DataUtils";
+import AdminPanel from "../components/AdminPanel";
 
 const useStyles = makeStyles(theme => ({
     list: {
@@ -101,7 +102,7 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
             case 'driverDashboard':
                 return <DriverTabPanel/>;
             case 'adminDashboard':
-                return <OrdersTable/>;
+                return <AdminPanel/>;
             default:
                 return <OrdersTable/>;
         }

@@ -148,7 +148,7 @@ export default function CreateOrderDialog(props) {
 
     return (
         <div>
-            <Dialog open={open} aria-labelledby="form-dialog-title">
+            <Dialog open={open} aria-labelledby="form-dialog-title" onEscapeKeyDown={() => setConfirmDialogMessage('In this case you will lose your changes.')}>
                 <DialogContent>
                         <div className={classes.paper}>
                             <Avatar className={classes.avatar}>
