@@ -47,4 +47,4 @@ export default function AlertDialog(props) {
 AlertDialog.propTypes = {
     open: PropTypes.any.isRequired,
     handleClose: PropTypes.func.isRequired
-}
+};

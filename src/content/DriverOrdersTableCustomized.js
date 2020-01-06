@@ -14,13 +14,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import Tooltip from '@material-ui/core/Tooltip';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
-import {byClasses, getUserFullName} from "../utils/DataUtils";
-import {lightBlue, green, red, blue} from '@material-ui/core/colors'
+import {getUserFullName} from "../utils/DataUtils";
+import {lightBlue, green} from '@material-ui/core/colors'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
-import Fab from '@material-ui/core/Fab';
-import RefreshOutlined from '@material-ui/icons/RefreshOutlined'
 import {CircularProgress} from "@material-ui/core";
 import OrderInfoButton from "../components/buttons/OrderInfoButton";
 import AssignButton from "../components/buttons/AssignButton";
@@ -172,27 +169,6 @@ const useToolbarStyles = makeStyles(theme => ({
         'flex-direction': 'row',
         'justify-content': 'center'
     },
-    smallButton: {
-        height: '30px',
-        width: '30px',
-        minWidth: '30px',
-        minHeight: '30px'
-    },
-    fabButton: {
-        color: '#fff',
-        boxShadow: 'none',
-        margin: '0.25em'
-    },
-    refreshButton: {
-        backgroundColor: blue[600],
-    },
-    cancelFab: {
-        backgroundColor: red[600],
-    },
-    assignFab: {
-        backgroundColor: green[600],
-        color: '#fff'
-    },
     statusDiv: {
         display: 'flex',
         alignItems: 'center',
@@ -288,20 +264,6 @@ const useStyles = makeStyles(theme => ({
         ...theme.mixins.toolbar,
         justifyContent: 'center',
         'min-height': '0px !important'
-    },
-    smallButton: {
-        height: '30px',
-        width: '30px',
-        minWidth: '30px',
-        minHeight: '30px'
-    },
-    assignFab: {
-        backgroundColor: green[600],
-        color: '#fff'
-    },
-    cancelFab: {
-        backgroundColor: red[600],
-        color: '#fff'
     },
     drawerHeader: {
         display: 'flex',

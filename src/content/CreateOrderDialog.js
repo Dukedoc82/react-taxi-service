@@ -10,7 +10,7 @@ import {green} from "@material-ui/core/colors";
 import Avatar from "@material-ui/core/Avatar";
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import Typography from "@material-ui/core/Typography";
-import ConfirmDialog from "../components/ConfirmDialog";
+import ConfirmDialog from "../components/dialogs/ConfirmDialog";
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,

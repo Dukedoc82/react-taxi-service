@@ -17,7 +17,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
-import ConfirmDialog from "../components/ConfirmDialog";
+import ConfirmDialog from "../components/dialogs/ConfirmDialog";
 import {PropTypes} from "prop-types";
 import {Dialog} from "@material-ui/core";
 import DialogContent from "@material-ui/core/DialogContent";

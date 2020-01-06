@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import ReactPhoneInput from "react-phone-input-mui";
 import {validateIsNotEmpty} from "../utils/ValidationUtils";
-import AlertDialog from "../components/AlertDialog";
+import AlertDialog from "../components/dialogs/AlertDialog";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import SignIn from "./SignIn";

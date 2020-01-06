@@ -15,7 +15,7 @@ import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import {Tooltip} from "@material-ui/core";
 import ClearIcon from '@material-ui/icons/Clear';
-import AlertDialog from "../components/AlertDialog";
+import AlertDialog from "../components/dialogs/AlertDialog";
 import CreateOrderDialog from "./CreateOrderDialog";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
