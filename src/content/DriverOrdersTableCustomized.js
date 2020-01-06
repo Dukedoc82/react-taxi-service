@@ -20,12 +20,12 @@ import {byClasses, getUserFullName} from "../utils/DataUtils";
 import {lightBlue, green, red, blue} from '@material-ui/core/colors'
 import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
 import CheckOutlined from '@material-ui/icons/CheckOutlined';
-import ClearOutlined from '@material-ui/icons/ClearOutlined'
 import Fab from '@material-ui/core/Fab';
 import RefreshOutlined from '@material-ui/icons/RefreshOutlined'
 import {CircularProgress} from "@material-ui/core";
 import OrderInfoButton from "../components/buttons/OrderInfoButton";
 import AssignButton from "../components/buttons/AssignButton";
+import RefuseButton from "../components/buttons/RefuseButton";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -219,12 +219,9 @@ const EnhancedTableToolbar = props => {
             ) : ''}
 
             {numSelected > 0 ? (
-                forStatus === 'assigned' ? (<div className={classes.statusDiv}> <Tooltip title="Refuse selected">
-                    <Fab className={byClasses([classes.fabButton, classes.cancelFab, classes.smallButton])}
-                         onClick={(e) => refuseOrders(e, selected)}>
-                        <ClearOutlined />
-                    </Fab>
-                </Tooltip> <Tooltip title="Complete selected">
+                forStatus === 'assigned' ? (<div className={classes.statusDiv}>
+                    <RefuseButton tooltip='Refuse selected' onClick={(e) => refuseOrders(e, selected)}/>
+                    <Tooltip title="Complete selected">
                     <Fab className={byClasses([classes.fabButton, classes.assignFab, classes.smallButton])}
                          onClick={(e) => completeOrders(e, selected)}>
                         <CheckOutlined />
@@ -420,11 +417,7 @@ export default function DriverOrdersTableCustomized(props) {
         else if (statuses === 'assigned') {
             return (<TableCell align="center" className={classes.statusCell}>
                 <div className={classes.buttonDiv}>
-                    <Tooltip title="Refuse">
-                        <div className={classes.statusDiv}>
-                            <Fab size='small' className={classes.cancelFab + ' ' + classes.smallButton} onClick={(e) => refuseOrder(e, rowId)}><ClearOutlined/></Fab>
-                        </div>
-                    </Tooltip>
+                    <RefuseButton tooltip='Refuse' onClick={(e) => refuseOrder(e, rowId)}/>
                     <Tooltip title="Complete">
                         <div className={classes.statusDiv}>
                             <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => completeOrder(e, rowId)}><CheckOutlined/></Fab>

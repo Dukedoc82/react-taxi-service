@@ -1,9 +1,8 @@
-import Fab from "@material-ui/core/Fab";
 import CheckOutlined from '@material-ui/icons/CheckOutlined';
-import Tooltip from "@material-ui/core/Tooltip";
 import React from "react";
 import styles from '../../utils/classes';
 import PropTypes from 'prop-types'
+import TooltipButton from "./TooltipButton";
 
 export default function AssignButton(props) {
     const classes = styles();
@@ -11,13 +10,8 @@ export default function AssignButton(props) {
     const {onClick, tooltip} = props;
 
     return (
-        <Tooltip title={tooltip}>
-            <div className={classes.statusDiv}>
-                <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={onClick}>
-                    <CheckOutlined/>
-                </Fab>
-            </div>
-        </Tooltip>
+        <TooltipButton onClick={onClick} tooltip={tooltip} className={classes.assignFab + ' ' + classes.smallButton}
+                       icon={<CheckOutlined/>}/>
     );
 };
 
