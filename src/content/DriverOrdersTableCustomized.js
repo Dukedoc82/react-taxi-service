@@ -26,6 +26,7 @@ import OrderInfoButton from "../components/buttons/OrderInfoButton";
 import AssignButton from "../components/buttons/AssignButton";
 import RefuseButton from "../components/buttons/RefuseButton";
 import CompleteButton from "../components/buttons/CompleteButton";
+import RefreshButton from "../components/buttons/RefreshButton";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -226,12 +227,7 @@ const EnhancedTableToolbar = props => {
                         (<AssignButton onClick={(e) => assignOrders(e, selected)} tooltip='Assign selected'/>
                         ): '')
             ) : (
-                <Tooltip title="Refresh">
-                    <Fab className={byClasses([classes.fabButton, classes.refreshButton, classes.smallButton])}
-                         onClick={refreshOrders}>
-                        <RefreshOutlined/>
-                    </Fab>
-                </Tooltip>
+                <RefreshButton tooltip='Refresh' onClick={refreshOrders}/>
             )}
         </Toolbar>
     );

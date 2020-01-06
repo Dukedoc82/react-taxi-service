@@ -10,7 +10,8 @@ export default function AssignButton(props) {
     const {onClick, tooltip} = props;
 
     return (
-        <TooltipButton onClick={onClick} tooltip={tooltip} className={classes.assignFab + ' ' + classes.smallButton}
+        <TooltipButton onClick={onClick} tooltip={tooltip}
+                       className={classes.assignFab + ' ' + classes.smallButton + ' ' + classes.fabButton}
                        icon={<CheckOutlined/>}/>
     );
 };

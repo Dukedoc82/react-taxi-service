@@ -11,7 +11,8 @@ export default function OrderInfoButton() {
     return (
         <Tooltip title="Order Details">
             <div className={classes.statusDiv}>
-                <Fab size='small' className={classes.infoFab + ' ' + classes.smallButton} onClick={(e) => console.log(e)}>
+                <Fab size='small' className={classes.infoFab + ' ' + classes.smallButton + ' ' + classes.fabButton}
+                     onClick={(e) => console.log(e)}>
                     <Icon path={mdiCarInfo} size={1} color={'#fff'}/>
                 </Fab>
             </div>

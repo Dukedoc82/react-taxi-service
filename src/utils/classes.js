@@ -1,6 +1,6 @@
 import React from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {green, lightBlue, red} from "@material-ui/core/colors";
+import {blue, green, lightBlue, red} from "@material-ui/core/colors";
 
 const appStyles = makeStyles(theme => ({
     assignFab: {
@@ -11,6 +11,14 @@ const appStyles = makeStyles(theme => ({
     },
     infoFab: {
         backgroundColor: lightBlue[600],
+    },
+    refreshButton: {
+        backgroundColor: blue[600],
+    },
+    fabButton: {
+        color: '#fff',
+        boxShadow: 'none',
+        margin: '0.25em'
     },
     smallButton: {
         height: '30px',

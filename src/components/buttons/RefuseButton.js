@@ -9,7 +9,7 @@ export default function RefuseButton(props) {
     const { tooltip, onClick } = props;
 
     return (
-        <TooltipButton onClick={onClick} tooltip={tooltip} className={classes.cancelFab + ' ' + classes.smallButton}
+        <TooltipButton onClick={onClick} tooltip={tooltip} className={classes.cancelFab + ' ' + classes.smallButton + ' ' + classes.fabButton}
                        icon={<ClearOutlined/>}/>
     );
 };

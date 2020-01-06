@@ -9,7 +9,8 @@ export default function CompleteButton(props) {
     const { tooltip, onClick } = props;
 
     return (
-        <TooltipButton onClick={onClick} tooltip={tooltip} className={classes.assignFab + ' ' + classes.smallButton}
+        <TooltipButton onClick={onClick} tooltip={tooltip}
+                       className={classes.assignFab + ' ' + classes.smallButton + ' ' + classes.fabButton}
                        icon={<CheckOutlined/>}/>
     );
 };
