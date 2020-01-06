@@ -24,6 +24,8 @@ import ClearOutlined from '@material-ui/icons/ClearOutlined'
 import Fab from '@material-ui/core/Fab';
 import RefreshOutlined from '@material-ui/icons/RefreshOutlined'
 import {CircularProgress} from "@material-ui/core";
+import OrderInfoButton from "../components/buttons/OrderInfoButton";
+import AssignButton from "../components/buttons/AssignButton";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -228,12 +230,7 @@ const EnhancedTableToolbar = props => {
                         <CheckOutlined />
                     </Fab>
                 </Tooltip></div>) : (forStatus === 'opened' ?
-                        (<Tooltip title="Assign selected">
-                            <Fab className={byClasses([classes.fabButton, classes.assignFab, classes.smallButton])}
-                                 onClick={(e) => assignOrders(e, selected)}>
-                                <CheckOutlined />
-                            </Fab>
-                            </Tooltip>
+                        (<AssignButton onClick={(e) => assignOrders(e, selected)} tooltip='Assign selected'/>
                         ): '')
             ) : (
                 <Tooltip title="Refresh">
@@ -415,14 +412,12 @@ export default function DriverOrdersTableCustomized(props) {
     const getActionsCellValue = (rowId) => {
         if (statuses === 'opened')
             return (<TableCell align="center" className={classes.tableCell}>
-                <Tooltip title="Assign To Me">
-                    <div className={classes.statusDiv}>
-                        <Fab size='small' className={classes.assignFab + ' ' + classes.smallButton} onClick={(e) => assignOrder(e, rowId)}><CheckOutlined/></Fab>
-                    </div>
-                </Tooltip>
+                <div className={classes.buttonDiv}>
+                <AssignButton onClick={(e) => assignOrder(e, rowId)} tooltip='Assign to Me'/>
+                <OrderInfoButton/>
+                </div>
             </TableCell>);
         else if (statuses === 'assigned') {
-
             return (<TableCell align="center" className={classes.statusCell}>
                 <div className={classes.buttonDiv}>
                     <Tooltip title="Refuse">
