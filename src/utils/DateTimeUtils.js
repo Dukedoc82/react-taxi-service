@@ -6,18 +6,25 @@ export function getDateFromISOString(isoDate) {
     return Date.parse(isoDate);
 }
 
-export function getFormattedDateFromISOString(isoDate) {
-    return formatDate(new Date(isoDate));
+export function getFormattedDateTimeFromISOString(isoDate) {
+    return formatDateTime(new Date(isoDate));
 }
 
-function formatDate(date) {
+function formatDateTime(date) {
+    return formatDate(date) + ' ' + formatTime(date);
+}
+
+export function formatDate(date) {
     let dd = getNumberWithLeadingZero(date.getDate());
     let MM = getNumberWithLeadingZero(date.getMonth() + 1);
-    let yy = getNumberWithLeadingZero(date.getFullYear() % 100);
+    let yy = date.getFullYear();
+    return dd + '.' + MM + '.' + yy;
+}
+
+export function formatTime(date) {
     let HH = getNumberWithLeadingZero(date.getHours());
     let mm = getNumberWithLeadingZero(date.getMinutes());
-
-    return dd + '.' + MM + '.' + yy + ' ' + HH + ':' + mm;
+    return HH + ':' + mm;
 }
 
 function getNumberWithLeadingZero(num) {

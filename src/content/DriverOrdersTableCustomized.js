@@ -17,13 +17,15 @@ import Checkbox from '@material-ui/core/Checkbox';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import {getUserFullName} from "../utils/DataUtils";
 import {lightBlue, green} from '@material-ui/core/colors'
-import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
+import {getFormattedDateTimeFromISOString} from "../utils/DateTimeUtils";
 import {CircularProgress} from "@material-ui/core";
 import OrderInfoButton from "../components/buttons/OrderInfoButton";
 import AssignButton from "../components/buttons/AssignButton";
 import RefuseButton from "../components/buttons/RefuseButton";
 import CompleteButton from "../components/buttons/CompleteButton";
 import RefreshButton from "../components/buttons/RefreshButton";
+import OrderDetails from "./OrderDetails";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -172,7 +174,7 @@ const useToolbarStyles = makeStyles(theme => ({
     statusDiv: {
         display: 'flex',
         alignItems: 'center',
-        padding: theme.spacing(0, 1),
+        padding: '0px 1px',
         ...theme.mixins.toolbar,
         justifyContent: 'center',
         'min-height': '0px !important'
@@ -260,7 +262,7 @@ const useStyles = makeStyles(theme => ({
     statusDiv: {
         display: 'flex',
         alignItems: 'center',
-        padding: theme.spacing(0, 1),
+        padding: '0px 1px',
         ...theme.mixins.toolbar,
         justifyContent: 'center',
         'min-height': '0px !important'
@@ -286,6 +288,7 @@ export default function DriverOrdersTableCustomized(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
+    const [isOrderDetailsOpened, setOrderDetailsOpened] = React.useState(null);
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
             '/driver/assignedOrders' : statuses ==='closed' ? '/driver/completedOrders' : 'null';
@@ -360,12 +363,23 @@ export default function DriverOrdersTableCustomized(props) {
 
     const isSelected = name => selected.indexOf(name) !== -1;
 
+    const getOrderDetailsDialog = () => {
+        return isOrderDetailsOpened ? <OrderDetails open={true} onClose={() => setOrderDetailsOpened(null)} orderId={isOrderDetailsOpened}/>
+        : '';
+    };
+
+    const onOrderDetailsInfoClick = (event, orderId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setOrderDetailsOpened(orderId);
+    };
+
     const getActionsCellValue = (rowId) => {
+        console.log(JSON.parse(localStorage.getItem('userData')));
         if (statuses === 'opened')
             return (<TableCell align="center" className={classes.tableCell}>
                 <div className={classes.buttonDiv}>
                 <AssignButton onClick={(e) => assignOrder(e, rowId)} tooltip='Assign to Me'/>
-                <OrderInfoButton/>
                 </div>
             </TableCell>);
         else if (statuses === 'assigned') {
@@ -373,6 +387,7 @@ export default function DriverOrdersTableCustomized(props) {
                 <div className={classes.buttonDiv}>
                     <RefuseButton tooltip='Refuse' onClick={(e) => refuseOrder(e, rowId)}/>
                     <CompleteButton tooltip='Complete' onClick={(e) => completeOrder(e, rowId)}/>
+                    <OrderInfoButton onClick={(e) => onOrderDetailsInfoClick(e, rowId)}/>
                 </div>
             </TableCell>);
         }
@@ -447,10 +462,12 @@ export default function DriverOrdersTableCustomized(props) {
 
     return (
         <div className={classes.root}>
+            <CssBaseline/>
             {dataRows === null ?
 
                 <div className={classes.drawerHeader}><CircularProgress/></div> :
                 <Paper className={classes.paper}>
+                    {getOrderDetailsDialog()}
                     <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders}
                                           selected={selected}
                                           refuseOrders={refuseOrders} forStatus={statuses} assignOrders={assignOrders}
@@ -496,7 +513,7 @@ export default function DriverOrdersTableCustomized(props) {
                                                 <TableCell align="left"
                                                            className={classes.tableCell}>{row.addressTo}</TableCell>
                                                 <TableCell align="right"
-                                                           className={classes.tableCell}>{getFormattedDateFromISOString(row.appointmentTime)}</TableCell>
+                                                           className={classes.tableCell}>{getFormattedDateTimeFromISOString(row.appointmentTime)}</TableCell>
                                                 <TableCell align="center"
                                                            className={classes.tableCell}>{row.client}</TableCell>
                                                 {getActionsCellValue(row.id)}
@@ -521,6 +538,7 @@ export default function DriverOrdersTableCustomized(props) {
                         onChangeRowsPerPage={handleChangeRowsPerPage}
                     />
                 </Paper>
+
             }
         </div>
     );

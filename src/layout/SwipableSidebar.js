@@ -1,5 +1,4 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -19,35 +18,11 @@ import {Typography} from "@material-ui/core";
 import PropTypes from 'prop-types'
 import {byClasses, getUserFullName} from "../utils/DataUtils";
 import AdminPanel from "../components/AdminPanel";
-
-const useStyles = makeStyles(theme => ({
-    list: {
-        width: 250,
-    },
-    fullList: {
-        width: 'auto',
-    },
-    drawerHeader: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: theme.spacing(0, 1),
-        ...theme.mixins.toolbar,
-        justifyContent: 'center',
-    },
-    userNameDiv: {
-        paddingTop: 0,
-        minHeight: '1em',
-        paddingBottom: '1em'
-    },
-    userNameTypography: {
-        fontWeight: 'bold',
-        fontSize: '0.875rem'
-    }
-}));
+import styles from '../utils/classes'
 
 export const SwipeableSidebar = forwardRef((props, ref) => {
     const {setApplicationBarTitle} = props;
-    const classes = useStyles();
+    const classes = styles();
     const [state, setState] = React.useState({
         left: false
     });

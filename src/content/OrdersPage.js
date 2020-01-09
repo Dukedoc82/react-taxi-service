@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import CreateOrder from './CreateOrder'
 import '../index.css'
-import {getFormattedDateFromISOString} from '../utils/DateTimeUtils'
+import {getFormattedDateTimeFromISOString} from '../utils/DateTimeUtils'
 
 class OrdersPage extends React.Component {
 
@@ -72,7 +72,7 @@ class OrdersPage extends React.Component {
                         return (
                             <tr id={order.id} key={order.id}>
                                 <td>{index + 1}</td>
-                                <td>{getFormattedDateFromISOString(updatedOn)}</td>
+                                <td>{getFormattedDateTimeFromISOString(updatedOn)}</td>
                                 <td>{order.client.firstName}</td>
                                 <td>{order.addressFrom}</td>
                                 <td>{order.addressTo}</td>

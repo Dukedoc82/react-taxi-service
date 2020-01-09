@@ -1,16 +1,13 @@
 import React, {useState} from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import { green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { validateIsNotEmpty } from "../utils/ValidationUtils";
 import {makePostCall} from "../utils/ajaxRequest";
-import PostAddIcon from '@material-ui/icons/PostAdd';
 import {
     MuiPickersUtilsProvider,
     KeyboardTimePicker,
@@ -158,12 +155,7 @@ export default function CreateNewOrder(props) {
         <Container component="main" className={classes.container}>
             <CssBaseline />
             <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <PostAddIcon/>
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    New order
-                </Typography>
+                s
                 <form className={classes.form} noValidate onSubmit={onSubmit}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container spacing={2}>

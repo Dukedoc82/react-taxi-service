@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {makeGetCall} from "../utils/ajaxRequest";
 import { green } from '@material-ui/core/colors';
-import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
+import {getFormattedDateTimeFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -71,7 +71,7 @@ export default function DriverOrdersTable() {
                                 {row.order.addressFrom}
                             </TableCell>
                             <TableCell>{row.order.addressTo}</TableCell>
-                            <TableCell align="right">{getFormattedDateFromISOString(row.order.appointmentDate)}</TableCell>
+                            <TableCell align="right">{getFormattedDateTimeFromISOString(row.order.appointmentDate)}</TableCell>
                             <TableCell align="center">{getUserFullName(row.order.client)}</TableCell>
                             <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
                         </TableRow>

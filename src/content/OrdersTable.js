@@ -11,7 +11,7 @@ import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import { green, red } from '@material-ui/core/colors';
 import Fab from '@material-ui/core/Fab';
 import PostAddIcon from '@material-ui/icons/PostAdd';
-import {getFormattedDateFromISOString} from "../utils/DateTimeUtils";
+import {getFormattedDateTimeFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import {Tooltip} from "@material-ui/core";
 import ClearIcon from '@material-ui/icons/Clear';
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
     statusDiv: {
         display: 'flex',
         alignItems: 'center',
-        padding: theme.spacing(0, 1),
+        padding: theme.spacing(0, 0),
         ...theme.mixins.toolbar,
         justifyContent: 'center',
         'min-height': '0px !important'
@@ -189,7 +189,7 @@ export default function SimpleTable() {
                                         {row.order.addressFrom}
                                     </TableCell>
                                     <TableCell>{row.order.addressTo}</TableCell>
-                                    <TableCell align="right">{getFormattedDateFromISOString(row.order.appointmentDate)}</TableCell>
+                                    <TableCell align="right">{getFormattedDateTimeFromISOString(row.order.appointmentDate)}</TableCell>
                                     <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
                                     <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
                                     <TableCell align="center">{getActionView(row)}</TableCell>
