@@ -14,10 +14,12 @@ import PostAddIcon from '@material-ui/icons/PostAdd';
 import {getFormattedDateTimeFromISOString} from "../utils/DateTimeUtils";
 import {getUserFullName, getStatusCaption} from "../utils/DataUtils";
 import {Tooltip} from "@material-ui/core";
-import ClearIcon from '@material-ui/icons/Clear';
 import AlertDialog from "../components/dialogs/AlertDialog";
 import CreateOrderDialog from "./CreateOrderDialog";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import OrderInfoButton from "../components/buttons/OrderInfoButton";
+import RefuseButton from "../components/buttons/RefuseButton";
+import OrderDetails from "./OrderDetails";
 
 const useStyles = makeStyles(theme => ({
     table: {
@@ -64,6 +66,12 @@ const useStyles = makeStyles(theme => ({
     clearIcon: {
         height: '20px',
         width: '20px'
+    },
+    buttonDiv: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 }));
 
@@ -72,6 +80,7 @@ export default function SimpleTable() {
     const [dataRows, setDataRows] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
     const [stateStatus, setStateStatus] = useState('display');
+    const [displayOrderDetailsId, setDisplayOrderDetailsId] = React.useState(null);
 
     const compare = (order1, order2) => {
         if (order1.status.titleKey === 'tp.status.completed' && order2.status.titleKey === 'tp.status.cancelled') {
@@ -123,17 +132,24 @@ export default function SimpleTable() {
         setStateStatus('create');
     };
 
+    const getOrderDetailsDialog = () => {
+        return displayOrderDetailsId ? <OrderDetails open={true} onClose={() => setDisplayOrderDetailsId(null)} orderId={displayOrderDetailsId}/>
+            : '';
+    };
+
+    const onOrderDetailsInfoClick = (event, orderId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setDisplayOrderDetailsId(orderId);
+    };
+
     const getActionView = (order) => {
         let status = order.status.titleKey;
         return !(status === 'tp.status.completed' || status === 'tp.status.cancelled') ?
-            <Tooltip title="Cancel Order">
-                <div className={classes.statusDiv}>
-                    <Fab size='small' className={classes.cancelFab + ' ' + classes.smallButton}
-                            onClick={(e) => cancelOrder(e, order.order.id)}>
-                        <ClearIcon className={classes.clearIcon}/>
-                    </Fab>
-                </div>
-            </Tooltip>
+            <div className={classes.buttonDiv}>
+                <RefuseButton tooltip='Cancel Order' onClick={(e) => cancelOrder(e, order.order.id)}/>
+                <OrderInfoButton onClick={(e) => onOrderDetailsInfoClick(e, order.order.id)}/>
+            </div>
            : '';
     };
 
@@ -162,6 +178,7 @@ export default function SimpleTable() {
     return (
         <div>
             <CssBaseline/>
+            {getOrderDetailsDialog()}
             <div className={classes.drawerHeader}>
                 <Fab color="primary" aria-label="add" className={classes.addFab} onClick={(e)=> showCreateOrderDialog(e)}>
                     <Tooltip title='Create new order'>

@@ -288,7 +288,7 @@ export default function DriverOrdersTableCustomized(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
-    const [isOrderDetailsOpened, setOrderDetailsOpened] = React.useState(null);
+    const [displayOrderDetailsId, setDisplayOrderDetailsId] = React.useState(null);
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
             '/driver/assignedOrders' : statuses ==='closed' ? '/driver/completedOrders' : 'null';
@@ -364,14 +364,14 @@ export default function DriverOrdersTableCustomized(props) {
     const isSelected = name => selected.indexOf(name) !== -1;
 
     const getOrderDetailsDialog = () => {
-        return isOrderDetailsOpened ? <OrderDetails open={true} onClose={() => setOrderDetailsOpened(null)} orderId={isOrderDetailsOpened}/>
+        return displayOrderDetailsId ? <OrderDetails open={true} onClose={() => setDisplayOrderDetailsId(null)} orderId={displayOrderDetailsId}/>
         : '';
     };
 
     const onOrderDetailsInfoClick = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
-        setOrderDetailsOpened(orderId);
+        setDisplayOrderDetailsId(orderId);
     };
 
     const getActionsCellValue = (rowId) => {
