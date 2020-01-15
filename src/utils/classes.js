@@ -80,6 +80,24 @@ const appStyles = makeStyles(theme => ({
     },
     boldText: {
         fontWeight: 'bold'
+    },
+    confirmedContainer: {
+        marginTop: '2em',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    messagePaper: {
+        backgroundColor: '#eee',
+        margin: '2em',
+        padding: '2em',
+        borderRadius: '6px',
+        maxWidth: '40%',
+        alignItems: 'center'
+    },
+    appLinkContainer: {
+        alignItems: 'center',
+        textAlign: 'center'
     }
 }));
 

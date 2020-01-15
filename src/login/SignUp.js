@@ -16,6 +16,7 @@ import AlertDialog from "../components/dialogs/AlertDialog";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import SignIn from "./SignIn";
+import AccountActivation from "./AccountActivation";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -197,6 +198,10 @@ export default function SignUp() {
         setPhoneNumberErrorMessage('');
     };
 
+    const showSuccessRegister = () => {
+        ReactDOM.render(<AccountActivation message={"You're successfully registered. To activate your account go to your inbox and follow the instructions which we sent you a moment ago."}/>, document.getElementById('root'));
+    };
+
     const handleSnackBarClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -204,7 +209,7 @@ export default function SignUp() {
 
         setSuccessMessageOpen(false);
         if (alertDialogTitle === 'Success')
-            goToLoginPage();
+            showSuccessRegister();
     };
 
     const validatePhoneNumber = (value) => {
@@ -233,7 +238,6 @@ export default function SignUp() {
         let isPasswordValid = validatePassword(password);
         let isPhoneNumberValid = validatePhoneNumber(phoneNumber);
         return isUserNameValid && isFirstNameValid && isLastNameValid && isPasswordValid && isPhoneNumberValid;
-
     };
 
     return (
