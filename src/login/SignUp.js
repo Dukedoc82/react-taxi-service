@@ -3,12 +3,10 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import { green } from '@material-ui/core/colors';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import ReactPhoneInput from "react-phone-input-mui";
 import {validateIsNotEmpty} from "../utils/ValidationUtils";
@@ -16,49 +14,10 @@ import AlertDialog from "../components/dialogs/AlertDialog";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import SignIn from "./SignIn";
-import AccountActivation from "./AccountActivation";
-
-const useStyles = makeStyles(theme => ({
-    paper: {
-        marginTop: theme.spacing(1),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-    errorSpan: {
-        color: '#f44336',
-        margin: '8px 14px 0',
-        'font-size': '0.75rem'
-    },
-    success: {
-        backgroundColor: green[600],
-    },
-    icon: {
-        fontSize: 20,
-    },
-    iconVariant: {
-        opacity: 0.9,
-        marginRight: theme.spacing(1),
-    },
-    message: {
-        display: 'flex',
-        alignItems: 'center',
-    }
-}));
+import styles from "../utils/classes";
 
 export default function SignUp() {
-    const classes = useStyles();
+    const classes = styles();
 
     const [username, setUsername] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -199,7 +158,7 @@ export default function SignUp() {
     };
 
     const showSuccessRegister = () => {
-        ReactDOM.render(<AccountActivation message={"You're successfully registered. To activate your account go to your inbox and follow the instructions which we sent you a moment ago."}/>, document.getElementById('root'));
+        
     };
 
     const handleSnackBarClose = (event, reason) => {

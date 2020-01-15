@@ -81,23 +81,41 @@ const appStyles = makeStyles(theme => ({
     boldText: {
         fontWeight: 'bold'
     },
-    confirmedContainer: {
-        marginTop: '2em',
+    paper: {
+        marginTop: theme.spacing(1),
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
-    },
-    messagePaper: {
-        backgroundColor: '#eee',
-        margin: '2em',
-        padding: '2em',
-        borderRadius: '6px',
-        maxWidth: '40%',
-        alignItems: 'center'
-    },
-    appLinkContainer: {
         alignItems: 'center',
-        textAlign: 'center'
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(3),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+    errorSpan: {
+        color: '#f44336',
+        margin: '8px 14px 0',
+        'font-size': '0.75rem'
+    },
+    success: {
+        backgroundColor: green[600],
+    },
+    icon: {
+        fontSize: 20,
+    },
+    iconVariant: {
+        opacity: 0.9,
+        marginRight: theme.spacing(1),
+    },
+    message: {
+        display: 'flex',
+        alignItems: 'center',
     }
 }));
 
