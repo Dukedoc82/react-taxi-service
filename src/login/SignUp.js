@@ -16,6 +16,7 @@ import AlertDialog from "../components/dialogs/AlertDialog";
 import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import SignIn from "./SignIn";
+import AccountActivation from "./AccountActivation";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -204,7 +205,8 @@ export default function SignUp() {
 
         setSuccessMessageOpen(false);
         if (alertDialogTitle === 'Success')
-            goToLoginPage();
+            //goToLoginPage();
+            ReactDOM.render(<AccountActivation text={"You're successfully registered. To activate your account go to your inbox and follow the instructions which we sent you a moment ago."}/>, document.getElementById('root'));
     };
 
     const validatePhoneNumber = (value) => {
