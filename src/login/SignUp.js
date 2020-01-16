@@ -17,6 +17,7 @@ import ReactDOM from 'react-dom';
 import {makePostCall} from "../utils/ajaxRequest";
 import SignIn from "./SignIn";
 import AccountActivation from "./AccountActivation";
+import BlockUi from "react-block-ui";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -75,6 +76,7 @@ export default function SignUp() {
     const [successMessageOpen, setSuccessMessageOpen] = useState(false);
     const [alertDialogTitle, setAlertDialogTitle] = useState('Success');
     const [alertDialogMessage, setAlertDialogMessage] = useState('');
+    const [blocking, setBlocking] = useState(false);
 
     const goToLoginPage = (event) => {
         if (event)
@@ -88,6 +90,7 @@ export default function SignUp() {
 
     const onSubmit = (event) => {
         event.preventDefault();
+        setBlocking(true);
         if (validateForm()) {
             let body = {
                 userName: username,
@@ -104,12 +107,14 @@ export default function SignUp() {
     };
 
     const onSuccessRegister = () => {
+        setBlocking(false);
         setAlertDialogTitle('Success');
         setAlertDialogMessage('User ' + username + ' successfully registered.');
         setSuccessMessageOpen(true);
     };
 
     const onFailRegister = (response) => {
+        setBlocking(false);
         setAlertDialogTitle('Error');
         let msg = response.message;
         if (msg.includes('ConstraintViolationException'))
@@ -240,6 +245,7 @@ export default function SignUp() {
 
     return (
         <Container component="main" maxWidth="xs">
+            <BlockUi tag="div" blocking={blocking}>
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -351,6 +357,7 @@ export default function SignUp() {
                     </Grid>
                 </form>
             </div>
+            </BlockUi>
         </Container>
     );
 }
