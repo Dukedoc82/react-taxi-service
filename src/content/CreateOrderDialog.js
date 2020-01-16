@@ -19,6 +19,8 @@ import {
 } from '@material-ui/pickers';
 import {makePostCall} from "../utils/ajaxRequest";
 import {validateIsNotEmpty} from "../utils/ValidationUtils";
+import BlockUi from "react-block-ui";
+import 'react-block-ui/style.css';
 
 const useStyles = makeStyles(theme => ({
     dialogRoot: {
@@ -87,6 +89,7 @@ export default function CreateOrderDialog(props) {
     const [addressFromError, setAddressFromError] = useState('');
     const [addressToError, setAddressToError] = useState('');
     const [confirmDialogMessage, setConfirmDialogMessage] = useState('');
+    const [blocking, setBlocking] = useState(false);
 
     const onAddressFromChange = (event) => {
         event.preventDefault();
@@ -101,6 +104,7 @@ export default function CreateOrderDialog(props) {
     };
 
     const onSuccessCreate = () => {
+        setBlocking(false);
         onCreate();
     };
 
@@ -120,15 +124,20 @@ export default function CreateOrderDialog(props) {
         setAddressToError(ADDRESS_TO_ERR_MSG);
     };
 
+    const onCreateError = () => {
+        setBlocking(false);
+    };
+
     const onSubmit = (event) => {
         event.preventDefault();
+        setBlocking(true);
         if (validateForm()) {
             let body = {
                 addressFrom: addressFrom,
                 addressTo: addressTo,
                 appointmentDate: selectedTime.toISOString()
             };
-            makePostCall("/order/new", body, onSuccessCreate);
+            makePostCall("/order/new", body, onSuccessCreate, onCreateError);
         }
     };
 
@@ -144,11 +153,18 @@ export default function CreateOrderDialog(props) {
         return addrFromIsNotEmpty && addrToIsNotEmpty;
     };
 
+    const onEscape = () => {
+        if (!blocking) {
+            setConfirmDialogMessage('In this case you will lose your changes.');
+        }
+    };
+
     const classes = useStyles();
 
     return (
         <div>
-            <Dialog open={open} aria-labelledby="form-dialog-title" onEscapeKeyDown={() => setConfirmDialogMessage('In this case you will lose your changes.')}>
+            <Dialog open={open} aria-labelledby="form-dialog-title" onEscapeKeyDown={onEscape}>
+                <BlockUi tag="div" blocking={blocking}>
                 <DialogContent>
                         <div className={classes.paper}>
                             <Avatar className={classes.avatar}>
@@ -249,8 +265,10 @@ export default function CreateOrderDialog(props) {
                         </div>
 
                 </DialogContent>
+                </BlockUi>
 
             </Dialog>
+
         </div>
     );
 }
