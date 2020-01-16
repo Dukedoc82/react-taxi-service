@@ -72,6 +72,10 @@ export default function SignIn() {
         setUserNameErrorMsg('No such Email Address/Password found');
     };
 
+    const onDisabledError = () => {
+        setUserNameErrorMsg('User is not activated.');
+    };
+
     const validate = () => {
         const isUserNameValid = validateUserName();
         const isPasswordValid = validatePassword();
@@ -92,7 +96,7 @@ export default function SignIn() {
             username: username,
             password: password
         };
-        validate() && makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError);
+        validate() && makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError, onDisabledError);
     };
 
     return (
