@@ -7,6 +7,7 @@ import {makeGetCall} from "./utils/ajaxRequest";
 import AccountActivation from "./login/AccountActivation";
 
 const docRoot = document.getElementById('root');
+localStorage.removeItem('serverUnavailable');
 if (window.location.pathname.indexOf("/confirm/") !== -1) {
     let onSuccess = function() {
         console.log("success");
