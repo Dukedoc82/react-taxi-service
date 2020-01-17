@@ -3,6 +3,8 @@ import properties from '../properties'
 import ReactDOM from 'react-dom';
 import SignIn from "../login/SignIn";
 
+const serverUnavailableKey = 'serverUnavailable';
+
 export function makePostCall(url, body, success, error, authError, disabledError) {
     makeBodyCall("POST", url, body, success, error, authError, disabledError);
 }
@@ -26,17 +28,20 @@ function onReadyStateChange(xhr, success, error, authError, disabledError) {
     if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status !== 200) {
             if (xhr.status === 500) {
-                if (error)
+                if (error) {
+                    localStorage.removeItem(serverUnavailableKey);
                     error(JSON.parse(xhr.responseText));
-                else {
+                } else {
                     defaultErrorHandler(xhr);
                 }
             } else if (xhr.status === 401) {
+                localStorage.removeItem(serverUnavailableKey);
                 if (authError)
                     authError(xhr);
                 else
                     defaultErrorHandler(xhr);
             } else if (xhr.status === 403) {
+                localStorage.removeItem(serverUnavailableKey);
                 if (disabledError) {
                     disabledError(xhr);
                 } else {
@@ -46,6 +51,7 @@ function onReadyStateChange(xhr, success, error, authError, disabledError) {
                 defaultErrorHandler(xhr);
             }
         } else {
+            localStorage.removeItem(serverUnavailableKey);
             if (xhr.status === 200) {
                 if (xhr.getAllResponseHeaders().indexOf("usertoken") >= 0) {
                     if (xhr.getResponseHeader("usertoken")) {
@@ -72,9 +78,16 @@ function makeBodyCall(method, url, body, success, error, authError, disabledErro
 
 function defaultErrorHandler(xhr) {
     if (xhr.status === 401) {
+        localStorage.removeItem(serverUnavailableKey);
         localStorage.removeItem("userToken");
         ReactDOM.render(<SignIn/>, document.getElementById('root'));
+    } else if (xhr.status === 0) {
+        if (!localStorage.getItem(serverUnavailableKey)) {
+            localStorage.setItem(serverUnavailableKey, true);
+            alert('Server is unavailable.');
+        }
     } else {
+        localStorage.removeItem(serverUnavailableKey);
         alert(xhr.status + ": " + xhr.responseText);
     }
 }
