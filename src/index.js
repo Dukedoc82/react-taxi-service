@@ -10,11 +10,9 @@ const docRoot = document.getElementById('root');
 localStorage.removeItem('serverUnavailable');
 if (window.location.pathname.indexOf("/confirm/") !== -1) {
     let onSuccess = function() {
-        console.log("success");
         ReactDOM.render(<AccountActivation text="Account successfully activated." showLink={true}/>, docRoot);
     };
     let onError = function(response) {
-        console.log(response);
         ReactDOM.render(<AccountActivation text={response.message}/>, docRoot);
     };
     makeGetCall(window.location.pathname, onSuccess, onError)

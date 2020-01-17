@@ -375,7 +375,6 @@ export default function DriverOrdersTableCustomized(props) {
     };
 
     const getActionsCellValue = (rowId) => {
-        console.log(JSON.parse(localStorage.getItem('userData')));
         if (statuses === 'opened')
             return (<TableCell align="center" className={classes.tableCell}>
                 <div className={classes.buttonDiv}>

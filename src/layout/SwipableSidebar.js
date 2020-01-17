@@ -12,13 +12,14 @@ import ReactDOM from "react-dom";
 import SignIn from "../login/SignIn";
 import {blue, red, green, grey, yellow} from '@material-ui/core/colors'
 import Icon from "@mdi/react";
-import { mdiPower, mdiCarShiftPattern, mdiTaxi, mdiAccountCardDetails, mdiWrench } from '@mdi/js';
+import { mdiPower, mdiCarShiftPattern, mdiTaxi, mdiAccountCardDetails, mdiWrench, mdiCarKey } from '@mdi/js';
 import DriverTabPanel from "../components/DriverTabPanel";
 import {Typography} from "@material-ui/core";
 import PropTypes from 'prop-types'
 import {byClasses, getUserFullName} from "../utils/DataUtils";
 import AdminPanel from "../components/AdminPanel";
 import styles from '../utils/classes'
+import SettingsPage from "../content/SettingsPage";
 
 export const SwipeableSidebar = forwardRef((props, ref) => {
     const {setApplicationBarTitle} = props;
@@ -48,15 +49,15 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
         setState({ ...state, [side]: open });
     };
 
-    const driverDashboardMenuItem = {id: 'driverDashboard', text: 'Driver Dashboard', icon: <Icon path={mdiCarShiftPattern}
+    const driverDashboardMenuItem = {id: 'driverDashboard', text: 'Driver Dashboard', icon: <Icon path={mdiCarKey}
                                                                                                   size={1}
-                                                                                                  color={grey[900]}/>};
+                                                                                                  color={green[600]}/>};
     const clientDashboardMenuItem = {id: 'userDashboard', text: 'Client Dashboard', icon: <Icon path={mdiTaxi}
                                                                                                 size={1}
                                                                                                 color={yellow[700]}/>};
-    const adminDashboardMenuITem = {id: 'adminDashboard', text: 'Admin Dashboard', icon: <Icon path={mdiWrench}
+    const adminDashboardMenuITem = {id: 'adminDashboard', text: 'Admin Dashboard', icon: <Icon path={mdiCarShiftPattern}
                                                                                                size={1}
-                                                                                               color={blue[700]}/> };
+                                                                                               color={grey[900]}/> };
     let menuTitles = [clientDashboardMenuItem];
     let userData = JSON.parse(localStorage.getItem('userData'));
     if (userData.uri.indexOf("/driver/") !== -1)
@@ -78,6 +79,8 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
                 return <DriverTabPanel/>;
             case 'adminDashboard':
                 return <AdminPanel/>;
+            case 'mailSettings':
+                return <SettingsPage/>;
             default:
                 return <OrdersTable/>;
         }
@@ -130,6 +133,18 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
                     <ListItem button key={menuTitle.id} onClick={() => setView(menuTitle)}>
                         <ListItemIcon>{menuTitle.icon}</ListItemIcon>
                         <ListItemText primary={menuTitle.text} />
+                    </ListItem>
+                ))}
+            </List>
+            <Divider />
+            <List>
+                {['Settings'].map((text) => (
+                    <ListItem button key={text} onClick={() => setView({id: 'mailSettings', text: 'Settings'})}>
+                        <ListItemIcon><Icon path={mdiWrench}
+                                            size={1}
+                                            color={blue[600]}
+                        /></ListItemIcon>
+                        <ListItemText primary={text} />
                     </ListItem>
                 ))}
             </List>
