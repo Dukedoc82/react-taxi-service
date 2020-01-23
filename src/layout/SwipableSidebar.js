@@ -58,14 +58,18 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
     const adminDashboardMenuITem = {id: 'adminDashboard', text: 'Admin Dashboard', icon: <Icon path={mdiCarShiftPattern}
                                                                                                size={1}
                                                                                                color={grey[900]}/> };
-    let menuTitles = [clientDashboardMenuItem];
-    let userData = JSON.parse(localStorage.getItem('userData'));
-    if (userData.uri.indexOf("/driver/") !== -1)
-        menuTitles.push(driverDashboardMenuItem);
-
-    menuTitles.push(adminDashboardMenuITem);
+    const [menuTitles] = useState([clientDashboardMenuItem]);
 
     const [currentView, setCurrentView] = useState(menuTitles[0]);
+
+    const getDashboards = () => {
+        return menuTitles.map((menuTitle) => (
+            <ListItem button key={menuTitle.id} onClick={() => setView(menuTitle)}>
+                <ListItemIcon>{menuTitle.icon}</ListItemIcon>
+                <ListItemText primary={menuTitle.text} />
+            </ListItem>
+        ))
+    };
 
     const setView = (menuTitle) => {
         setMyState(myState + 1);
@@ -88,8 +92,20 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
 
     const [myState, setMyState] = useState(1);
 
+    const onRolesLoaded = (response) => {
+        if (response.driver) {
+            menuTitles.push(driverDashboardMenuItem);
+        }
+        if (response.admin) {
+            menuTitles.push(adminDashboardMenuITem);
+            menuTitles.push(driverDashboardMenuItem);
+        }
+        setApplicationBarTitle(menuTitles[0].text);
+    };
+
     useEffect(() => {
         if (myState === 1) {
+            makeGetCall("/userRoles/" + localStorage.getItem('userToken'), onRolesLoaded);
             setApplicationBarTitle(menuTitles[0].text);
             setMyState(2);
         }
@@ -129,12 +145,7 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
             </div>
             <Divider/>
             <List>
-                {menuTitles.map((menuTitle) => (
-                    <ListItem button key={menuTitle.id} onClick={() => setView(menuTitle)}>
-                        <ListItemIcon>{menuTitle.icon}</ListItemIcon>
-                        <ListItemText primary={menuTitle.text} />
-                    </ListItem>
-                ))}
+                {getDashboards()}
             </List>
             <Divider />
             <List>
