@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import PropTypes from "prop-types";
 import DriverSelect from "./DriverSelect";
+import UsersView from "../content/UsersView";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -61,19 +62,15 @@ export default function AdminPanel() {
             <AppBar position="static">
                 <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered={true}
                       variant={'fullWidth'} >
-                    <Tab label="Active Orders" {...a11yProps(0)} />
-                    <Tab label="Assigned to Me" {...a11yProps(1)} />
-                    <Tab label="Closed Requests" {...a11yProps(2)} />
+                    <Tab label="Users" {...a11yProps(0)} />
+                    <Tab label="Orders" {...a11yProps(1)} />
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <DriverSelect/>
+                <UsersView/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                2
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                3
+                <DriverSelect/>
             </TabPanel>
         </div>
     );

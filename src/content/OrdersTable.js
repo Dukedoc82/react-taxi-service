@@ -111,6 +111,27 @@ export default function SimpleTable() {
         }
     };
 
+    const getOrdersDataRows = () => {
+        return dataRows !== null && dataRows.length > 0 ? dataRows.map(row => (
+            <TableRow key={row.order.id}>
+                <TableCell component="th" scope="row">
+                    {row.order.addressFrom}
+                </TableCell>
+                <TableCell>{row.order.addressTo}</TableCell>
+                <TableCell align="right">{getFormattedDateTimeFromISOString(row.order.appointmentDate)}</TableCell>
+                <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
+                <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
+                <TableCell align="center">{getActionView(row)}</TableCell>
+            </TableRow>
+        )) : (
+            <TableRow key={'no.order.data'}>
+                <TableCell component='th' scope='row' colSpan={6} align='center'>
+                    It seems you haven't created any order yet. Use 'Create Order Button' to create a new taxi request.
+                </TableCell>
+            </TableRow>
+        );
+    };
+
     const onCancelSuccess = () => {
         makeGetCall("/order/", onDataLoaded);
     };
@@ -200,18 +221,7 @@ export default function SimpleTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {dataRows.map(row => (
-                                <TableRow key={row.order.id}>
-                                    <TableCell component="th" scope="row">
-                                        {row.order.addressFrom}
-                                    </TableCell>
-                                    <TableCell>{row.order.addressTo}</TableCell>
-                                    <TableCell align="right">{getFormattedDateTimeFromISOString(row.order.appointmentDate)}</TableCell>
-                                    <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
-                                    <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
-                                    <TableCell align="center">{getActionView(row)}</TableCell>
-                                </TableRow>
-                            ))}
+                            {getOrdersDataRows()}
                         </TableBody>
                     </Table>
                     {getNewOrderDialog()}
