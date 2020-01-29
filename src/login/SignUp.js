@@ -92,17 +92,21 @@ export default function SignUp() {
         event.preventDefault();
         setBlocking(true);
         if (validateForm()) {
-            let body = {
-                userName: username,
-                password: password,
-                firstName: firstName,
-                lastName: lastName,
-                phoneNumber: phoneNumber
+            let ajax = {
+                url: window.location.search === '?driver' ?
+                    '/registerAsADriver' :
+                    '/register',
+                body: {
+                    userName: username,
+                    password: password,
+                    firstName: firstName,
+                    lastName: lastName,
+                    phoneNumber: phoneNumber
+                },
+                onSuccess: onSuccessRegister,
+                onError: onFailRegister
             };
-            let url = window.location.search === '?driver' ?
-                '/registerAsADriver' :
-                '/register';
-            makePostCall(url, body, onSuccessRegister, onFailRegister);
+            makePostCall(ajax);
         }
     };
 

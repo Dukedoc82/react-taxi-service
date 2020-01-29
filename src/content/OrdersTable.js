@@ -133,7 +133,11 @@ export default function SimpleTable() {
     };
 
     const onCancelSuccess = () => {
-        makeGetCall("/order/", onDataLoaded);
+        let ajax = {
+            url: '/order/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const onCancelError = (response) => {
@@ -141,7 +145,13 @@ export default function SimpleTable() {
     };
 
     const cancelOrder = (event, orderId) => {
-        makePutCall("/order/cancel/" + orderId, null, onCancelSuccess, onCancelError);
+        event.preventDefault();
+        let ajax = {
+            url: '/order/cancel/' + orderId,
+            onSuccess: onCancelSuccess,
+            onError: onCancelError
+        };
+        makePutCall(ajax);
     };
 
     const onDataLoaded = (response) => {
@@ -190,11 +200,21 @@ export default function SimpleTable() {
 
     const onOrderCreate = () => {
         setStateStatus('display');
-        makeGetCall('/order/', onDataLoaded);
+        let ajax = {
+            url: '/order/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
+        makeGetCall(ajax);
     };
 
-    if (dataRows === null)
-        makeGetCall("/order/", onDataLoaded);
+    if (dataRows === null) {
+        let ajax = {
+            url: '/order/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
+    }
 
     return (
         <div>

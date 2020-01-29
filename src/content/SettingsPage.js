@@ -119,19 +119,27 @@ export default function SettingsPage() {
     };
 
     if (dataRows === null) {
-        makeGetCall("/mailSettings/", onDataLoaded);
+        let ajax = {
+            url: '/mailSettings/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
     }
 
     const saveChanges = () => {
         setLoading(true);
-        let body = {
-            getNewOrderNotifications: getDataRowByName('newOrderNotifications').value,
-            getCancelOrderNotifications: getDataRowByName('cancelOrderNotifications').value,
-            getCompleteOrderNotifications: getDataRowByName('completeOrderNotifications').value,
-            getRefuseOrderNotifications: getDataRowByName('refuseOrderNotifications').value,
-            getAssignOrderNotifications: getDataRowByName('assignOrderNotifications').value
+        let ajax = {
+            url: '/mailSettings/update',
+            body: {
+                getNewOrderNotifications: getDataRowByName('newOrderNotifications').value,
+                getCancelOrderNotifications: getDataRowByName('cancelOrderNotifications').value,
+                getCompleteOrderNotifications: getDataRowByName('completeOrderNotifications').value,
+                getRefuseOrderNotifications: getDataRowByName('refuseOrderNotifications').value,
+                getAssignOrderNotifications: getDataRowByName('assignOrderNotifications').value
+            },
+            onSuccess: onDataLoaded
         };
-        makePutCall('/mailSettings/update', body, onDataLoaded);
+        makePutCall(ajax);
     };
 
     const getDataRowByName = (name) => {

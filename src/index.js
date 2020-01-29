@@ -15,7 +15,12 @@ if (window.location.pathname.indexOf("/confirm/") !== -1) {
     let onError = function(response) {
         ReactDOM.render(<AccountActivation text={response.message}/>, docRoot);
     };
-    makeGetCall(window.location.pathname, onSuccess, onError)
+    let ajax = {
+        url: window.location.pathname,
+        onSuccess: onSuccess,
+        onError: onError
+    };
+    makeGetCall(ajax);
 } else if (window.location.search === '?driver')
     ReactDOM.render(<SignUp/>, docRoot);
 else if (localStorage.getItem("userToken")) {

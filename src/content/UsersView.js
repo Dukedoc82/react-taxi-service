@@ -84,7 +84,11 @@ export default function UsersView() {
     const onUserSelect = (event) => {
         event.preventDefault();
         setLoadingUser(true);
-        makeGetCall("/admin/userEdit/" + event.target.value, onUserDataLoaded);
+        let ajax = {
+            url: '/admin/userEdit/' + event.target.value,
+            onSuccess: onUserDataLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const getUsersList = () => {
@@ -96,8 +100,11 @@ export default function UsersView() {
     const onUsersLoaded = (response) => {
         setLoadingUsers(false);
         setUsers(response);
-        makeGetCall("/admin/userEdit/" + response[0].userId, onUserDataLoaded);
-        //setSelectedUser(response[0]);
+        let ajax = {
+            url: '/admin/userEdit/' + response[0].userId,
+            onSuccess: onUserDataLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const onRolesLoaded = (response) => {
@@ -124,11 +131,19 @@ export default function UsersView() {
     };
 
     const createUserList = () => {
-        makeGetCall("/admin/user/", onUsersLoaded);
+        let ajax = {
+            url: '/admin/user/',
+            onSuccess: onUsersLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const createRolesList = () => {
-        makeGetCall("/admin/roles", onRolesLoaded);
+        let ajax = {
+            url: '/admin/roles',
+            onSuccess: onRolesLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const createRoleItems = () => {
@@ -155,17 +170,18 @@ export default function UsersView() {
     };
 
     const updateUser = () => {
-        console.log(selectedUser);
-        let body = {
-            userId: selectedUser.userId,
-            firstName: firstName,
-            lastName: lastName,
-            role: {
-                roleId: selectedRoleId
+        let ajax = {
+            url: '/admin/updateUser',
+            body: {
+                userId: selectedUser.userId,
+                firstName: firstName,
+                lastName: lastName,
+                role: {
+                    roleId: selectedRoleId
+                }
             }
         };
-        makePutCall("/admin/updateUser", body);
-        console.log(body);
+        makePutCall(ajax);
     };
 
     if (users === null)
