@@ -22,7 +22,11 @@ class OrdersPage extends React.Component {
     };
 
     getOrders = () => {
-        makeGetCall("/order/", this.success);
+        let ajax = {
+            url: '/order/',
+            onSuccess: this.success
+        };
+        makeGetCall(ajax);
     };
 
     showCreateOrderForm = () => {
@@ -35,7 +39,11 @@ class OrdersPage extends React.Component {
 
     cancelOrder = (event, orderId) => {
         event.preventDefault();
-        makePutCall("/order/cancel/" + orderId, null, this.getOrders);
+        let ajax = {
+            url: '/order/cancel/' + orderId,
+            onSuccess: this.getOrders
+        };
+        makePutCall(ajax);
     };
 
     getOrderActions = (status, orderId) => {

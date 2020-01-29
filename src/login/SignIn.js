@@ -92,11 +92,18 @@ export default function SignIn() {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        let body = {
-            username: username,
-            password: password
+        let ajax = {
+            url: '/authenticate',
+            body: {
+                username: username,
+                password: password
+            },
+            onSuccess: onSuccessAuth,
+            onError: onError,
+            onAuthError: onAuthError,
+            onDisabledError: onDisabledError
         };
-        validate() && makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError, onDisabledError);
+        validate() && makePostCall(ajax);
     };
 
     return (

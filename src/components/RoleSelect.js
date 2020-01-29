@@ -24,7 +24,11 @@ export default function RoleSelect(props) {
     };
 
     const getRoles = () => {
-        makeGetCall("/admin/roles", onRolesLoaded);
+        let ajax = {
+            url: '/admin/roles',
+            onSuccess: onRolesLoaded
+        };
+        makeGetCall(ajax);
     };
 
     useEffect(() => {

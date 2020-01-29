@@ -37,7 +37,11 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
 
     const doLogout = (event) => {
         event.preventDefault();
-        makeGetCall("/doLogout", onSuccessLogout);
+        let ajax = {
+            url: '/doLogout',
+            onSuccess: onSuccessLogout
+        };
+        makeGetCall(ajax);
     };
 
     const onSuccessLogout = () => {
@@ -105,7 +109,11 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
 
     useEffect(() => {
         if (myState === 1) {
-            makeGetCall("/userRoles/" + localStorage.getItem('userToken'), onRolesLoaded);
+            let ajax = {
+                url: '/userRoles/' + localStorage.getItem('userToken'),
+                onSuccess: onRolesLoaded
+            };
+            makeGetCall(ajax);
             setApplicationBarTitle(menuTitles[0].text);
             setMyState(2);
         }

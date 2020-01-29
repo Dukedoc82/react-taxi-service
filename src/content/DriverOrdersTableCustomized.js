@@ -338,46 +338,77 @@ export default function DriverOrdersTableCustomized(props) {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('assign');
-        makePutCall('/driver/assignOrderToMe/' + orderId, null, refreshOpenedOrders);
+        let ajax = {
+            url: '/driver/assignOrderToMe/' + orderId,
+            onSuccess: refreshOpenedOrders
+        };
+        makePutCall(ajax);
     };
 
     const refuseOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('refuse');
-        makePutCall('/driver/refuseOrders', orderIds, refreshOpenedOrders);
+        let ajax = {
+            url: '/driver/refuseOrders',
+            body: orderIds,
+            onSuccess: refreshOpenedOrders
+        };
+        makePutCall(ajax);
     };
 
     const assignOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('assign');
-        makePutCall('/driver/assignOrders', orderIds, refreshOpenedOrders);
+        let ajax = {
+            url: '/driver/assignOrders',
+            body: orderIds,
+            onSuccess: refreshOpenedOrders
+        };
+        makePutCall(ajax);
     };
 
     const completeOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('assign');
-        makePutCall('/driver/completeOrders', orderIds, refreshOpenedOrders);
+        let ajax = {
+            url: '/driver/completeOrders',
+            body: orderIds,
+            onSuccess: refreshOpenedOrders
+        };
+        makePutCall(ajax);
     };
 
     const refuseOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('refuse');
-        makePutCall('/driver/refuseOrder/' + orderId, null, refreshOpenedOrders)
+        let ajax = {
+            url: '/driver/refuseOrder/' + orderId,
+            onSuccess: refreshOpenedOrders
+        };
+        makePutCall(ajax);
     };
 
     const completeOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
         setPerformedAction('complete');
-        makePutCall('/driver/completeOrder/' + orderId, null, refreshOpenedOrders)
+        let ajax = {
+            url: '/driver/completeOrder/' + orderId,
+            onSuccess: refreshOpenedOrders
+        };
+        makePutCall(ajax);
     };
 
     const refreshOpenedOrders = () => {
-        makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
+        let ajax = {
+            url: getOrdersUrl,
+            onSuccess: onOpenedOrdersLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const getCheckboxCell = (classes, isItemSelected, labelId) => {
@@ -392,7 +423,11 @@ export default function DriverOrdersTableCustomized(props) {
     let performedAction = '';
 
     if (dataRows == null) {
-        makeGetCall(getOrdersUrl, onOpenedOrdersLoaded);
+        let ajax = {
+            url: getOrdersUrl,
+            onSuccess: onOpenedOrdersLoaded
+        };
+        makeGetCall(ajax);
     }
 
     return (

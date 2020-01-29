@@ -133,12 +133,16 @@ export default function CreateNewOrder(props) {
     const onSubmit = (event) => {
         event.preventDefault();
         if (validateForm()) {
-            let body = {
-                addressFrom: addressFrom,
-                addressTo: addressTo,
-                appointmentDate: selectedTime.toISOString()
+            let ajax = {
+                url: '/order/new',
+                body: {
+                    addressFrom: addressFrom,
+                    addressTo: addressTo,
+                    appointmentDate: selectedTime.toISOString()
+                },
+                onSuccess: onSuccessCreate
             };
-            makePostCall("/order/new", body, onSuccessCreate);
+            makePostCall(ajax);
         }
     };
 

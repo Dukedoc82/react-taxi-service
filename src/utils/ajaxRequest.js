@@ -5,22 +5,25 @@ import SignIn from "../login/SignIn";
 
 const serverUnavailableKey = 'serverUnavailable';
 
-export function makePostCall(url, body, success, error, authError, disabledError) {
-    makeBodyCall("POST", url, body, success, error, authError, disabledError);
+export function makePostCall(ajax) {
+    const {url, body, onSuccess, onError, onAuthError, onDisabledError} = ajax;
+    makeBodyCall("POST", url, body, onSuccess, onError, onAuthError, onDisabledError);
 }
 
-export function makePutCall(url, body, success, error, authError, disabledError) {
-    makeBodyCall("PUT", url, body, success, error, authError, disabledError);
+export function makePutCall(ajax) {
+    const {url, body, onSuccess, onError, onAuthError, onDisabledError} = ajax;
+    makeBodyCall("PUT", url, body, onSuccess, onError, onAuthError, onDisabledError);
 }
 
-export function makeGetCall(url, success, error, authError, disabledError) {
+export function makeGetCall(ajax) {
+    const {url, onSuccess, onError, onAuthError, onDisabledError} = ajax;
     const xhr = new XMLHttpRequest();
     xhr.open("GET", properties.backendServer + url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader("usertoken", localStorage.getItem("userToken"));
     xhr.send();
     xhr.onreadystatechange = function() {
-        onReadyStateChange(xhr, success, error, authError, disabledError);
+        onReadyStateChange(xhr, onSuccess, onError, onAuthError, onDisabledError);
     }
 }
 
