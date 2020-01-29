@@ -11,7 +11,6 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import {getUserFullName} from "../utils/DataUtils";
-import {lightBlue, green} from '@material-ui/core/colors'
 import {getFormattedDateTimeFromISOString} from "../utils/DateTimeUtils";
 import {CircularProgress} from "@material-ui/core";
 import OrderInfoButton from "../components/buttons/OrderInfoButton";
@@ -75,26 +74,6 @@ const useStyles = makeStyles(theme => ({
     table: {
         minWidth: 750,
     },
-    visuallyHidden: {
-        border: 0,
-        clip: 'rect(0 0 0 0)',
-        height: 1,
-        margin: -1,
-        overflow: 'hidden',
-        padding: 0,
-        position: 'absolute',
-        top: 20,
-        width: 1,
-    },
-    tableHeader: {
-        'font-weight': 'bold'
-    },
-    avatarBlue: {
-        'backgroundColor': lightBlue[600]
-    },
-    avatarGreen: {
-        'backgroundColor': green[600]
-    },
     tableCell: {
         padding: '1em'
     },
@@ -122,9 +101,6 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0, 1),
         ...theme.mixins.toolbar,
         justifyContent: 'center',
-    },
-    hiddenDiv: {
-        display: 'none'
     }
 }));
 
