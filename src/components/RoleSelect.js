@@ -19,7 +19,6 @@ export default function RoleSelect(props) {
     };
 
     const onRolesLoaded = (response) => {
-        console.log(response);
         setRoles(response);
     };
 

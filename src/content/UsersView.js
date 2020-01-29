@@ -170,7 +170,6 @@ export default function UsersView() {
     };
 
     const updateUser = () => {
-        console.log(selectedUser);
         let ajax = {
             url: '/admin/updateUser',
             body: {
