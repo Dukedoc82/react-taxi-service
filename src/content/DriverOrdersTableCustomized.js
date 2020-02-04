@@ -1,27 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import {getUserFullName} from "../utils/DataUtils";
+import {lightBlue, green} from '@material-ui/core/colors'
 import {getFormattedDateTimeFromISOString} from "../utils/DateTimeUtils";
 import {CircularProgress} from "@material-ui/core";
 import OrderInfoButton from "../components/buttons/OrderInfoButton";
 import AssignButton from "../components/buttons/AssignButton";
 import RefuseButton from "../components/buttons/RefuseButton";
 import CompleteButton from "../components/buttons/CompleteButton";
+import RefreshButton from "../components/buttons/RefreshButton";
 import OrderDetails from "./OrderDetails";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import EnhancedTableHead from "../components/table/EnhancedTableHead";
-import EnhancedTableToolbar from "../components/table/EnhancedTableToolbar";
-import RefreshButton from "../components/buttons/RefreshButton";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -63,6 +66,78 @@ function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
+const useToolbarStyles = makeStyles(theme => ({
+    root: {
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(1)
+    },
+    highlight:
+        theme.palette.type === 'light'
+            ? {
+                color: theme.palette.secondary.main,
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+            }
+            : {
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.secondary.dark,
+            },
+    title: {
+        flex: '1 1 100%',
+    },
+    tableHeader: {
+        'font-weight': 'bold',
+        'border-bottom': 'none'
+    },
+    statusCell: {
+        width: '15%',
+        display: 'flex',
+        'flex-direction': 'row',
+        'justify-content': 'center'
+    },
+    statusDiv: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0px 1px',
+        ...theme.mixins.toolbar,
+        justifyContent: 'center',
+        'min-height': '0px !important'
+    }
+}));
+
+const EnhancedTableToolbar = props => {
+    const classes = useToolbarStyles();
+    const { numSelected, refreshOrders, selected, refuseOrders, assignOrders, completeOrders, forStatus } = props;
+
+    return (
+        <Toolbar
+            className={clsx(classes.root, {
+                [classes.highlight]: numSelected > 0,
+            })}
+        >
+            {numSelected > 0 ? (
+                <Typography className={classes.title} color="inherit" variant="subtitle1">
+                    {numSelected} selected
+                </Typography>
+            ) : ''}
+
+            {numSelected > 0 ? (
+                forStatus === 'assigned' ? (<div className={classes.statusDiv}>
+                    <RefuseButton tooltip='Refuse selected' onClick={(e) => refuseOrders(e, selected)}/>
+                    <CompleteButton tooltip='Complete selected' onClick={(e) => completeOrders(e, selected)}/>
+                    </div>) : (forStatus === 'opened' ?
+                        (<AssignButton onClick={(e) => assignOrders(e, selected)} tooltip='Assign selected'/>
+                        ): '')
+            ) : (
+                <RefreshButton tooltip='Refresh' onClick={refreshOrders}/>
+            )}
+        </Toolbar>
+    );
+};
+
+EnhancedTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+};
+
 const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
@@ -73,6 +148,26 @@ const useStyles = makeStyles(theme => ({
     },
     table: {
         minWidth: 750,
+    },
+    visuallyHidden: {
+        border: 0,
+        clip: 'rect(0 0 0 0)',
+        height: 1,
+        margin: -1,
+        overflow: 'hidden',
+        padding: 0,
+        position: 'absolute',
+        top: 20,
+        width: 1,
+    },
+    tableHeader: {
+        'font-weight': 'bold'
+    },
+    avatarBlue: {
+        'backgroundColor': lightBlue[600]
+    },
+    avatarGreen: {
+        'backgroundColor': green[600]
     },
     tableCell: {
         padding: '1em'
@@ -101,6 +196,9 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0, 1),
         ...theme.mixins.toolbar,
         justifyContent: 'center',
+    },
+    hiddenDiv: {
+        display: 'none'
     }
 }));
 
@@ -300,7 +398,7 @@ export default function DriverOrdersTableCustomized(props) {
         setPerformedAction('complete');
         let ajax = {
             url: '/driver/completeOrder/' + orderId,
-            onSuccess: refreshOpenedOrders
+            onSuccess: refreshOpenedOrders()
         };
         makePutCall(ajax);
     };
@@ -322,19 +420,6 @@ export default function DriverOrdersTableCustomized(props) {
         </TableCell>) : null;
     };
 
-    const getAvailableActionsOnSelected = () => {
-        return selected.length > 0 ? (
-            statuses === 'assigned' ? (<div className={classes.statusDiv}>
-                <RefuseButton tooltip='Refuse selected' onClick={(e) => refuseOrders(e, selected)}/>
-                <CompleteButton tooltip='Complete selected' onClick={(e) => completeOrders(e, selected)}/>
-            </div>) : (statuses === 'opened' ?
-                (<AssignButton onClick={(e) => assignOrders(e, selected)} tooltip='Assign selected'/>
-                ): '')
-        ) : (
-            <RefreshButton tooltip='Refresh' onClick={refreshOpenedOrders}/>
-        );
-    };
-
     let performedAction = '';
 
     if (dataRows == null) {
@@ -353,8 +438,10 @@ export default function DriverOrdersTableCustomized(props) {
                 <div className={classes.drawerHeader}><CircularProgress/></div> :
                 <Paper className={classes.paper}>
                     {getOrderDetailsDialog()}
-                    <EnhancedTableToolbar numSelected={selected.length} refreshData={refreshOpenedOrders}
-                                          actionsForSelected={getAvailableActionsOnSelected}/>
+                    <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders}
+                                          selected={selected}
+                                          refuseOrders={refuseOrders} forStatus={statuses} assignOrders={assignOrders}
+                                          completeOrders={completeOrders}/>
                     <TableContainer>
                         <Table
                             className={classes.table}
