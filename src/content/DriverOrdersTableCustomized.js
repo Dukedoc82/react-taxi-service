@@ -25,6 +25,7 @@ import RefreshButton from "../components/buttons/RefreshButton";
 import OrderDetails from "./OrderDetails";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import EnhancedTableHead from "../components/table/EnhancedTableHead";
+import BlockUi from "react-block-ui";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
@@ -212,6 +213,7 @@ export default function DriverOrdersTableCustomized(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
     const [displayOrderDetailsId, setDisplayOrderDetailsId] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
             '/driver/assignedOrders' : statuses ==='closed' ? '/driver/completedOrders' : 'null';
@@ -256,6 +258,7 @@ export default function DriverOrdersTableCustomized(props) {
             changeOrdersHandler(rows, performedAction);
         }
         setSelected([]);
+        setLoading(false);
         setPerformedAction('');
     };
 
@@ -337,6 +340,7 @@ export default function DriverOrdersTableCustomized(props) {
     const assignOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('assign');
         let ajax = {
             url: '/driver/assignOrderToMe/' + orderId,
@@ -348,6 +352,7 @@ export default function DriverOrdersTableCustomized(props) {
     const refuseOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('refuse');
         let ajax = {
             url: '/driver/refuseOrders',
@@ -360,6 +365,7 @@ export default function DriverOrdersTableCustomized(props) {
     const assignOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('assign');
         let ajax = {
             url: '/driver/assignOrders',
@@ -372,6 +378,7 @@ export default function DriverOrdersTableCustomized(props) {
     const completeOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('assign');
         let ajax = {
             url: '/driver/completeOrders',
@@ -384,6 +391,7 @@ export default function DriverOrdersTableCustomized(props) {
     const refuseOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('refuse');
         let ajax = {
             url: '/driver/refuseOrder/' + orderId,
@@ -395,6 +403,7 @@ export default function DriverOrdersTableCustomized(props) {
     const completeOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('complete');
         let ajax = {
             url: '/driver/completeOrder/' + orderId,
@@ -404,6 +413,7 @@ export default function DriverOrdersTableCustomized(props) {
     };
 
     const refreshOpenedOrders = () => {
+        setLoading(true);
         let ajax = {
             url: getOrdersUrl,
             onSuccess: onOpenedOrdersLoaded
@@ -433,6 +443,7 @@ export default function DriverOrdersTableCustomized(props) {
     return (
         <div className={classes.root}>
             <CssBaseline/>
+            <BlockUi tag='div' blocking={loading}>
             {dataRows === null ?
 
                 <div className={classes.drawerHeader}><CircularProgress/></div> :
@@ -511,6 +522,7 @@ export default function DriverOrdersTableCustomized(props) {
                 </Paper>
 
             }
+            </BlockUi>
         </div>
     );
 };
