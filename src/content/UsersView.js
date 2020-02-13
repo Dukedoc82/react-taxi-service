@@ -78,8 +78,8 @@ export default function UsersView() {
             return true;
         if (!firstName || !lastName)
             return true;
-        return !firstName && !(selectedUser.firstName !== firstName || selectedUser.lastName !== lastName
-            || selectedUser.role.roleId !== selectedRoleId);
+        return !!firstName && !!lastName && (selectedUser.firstName === firstName && selectedUser.lastName === lastName
+            && selectedUser.role.roleId === selectedRoleId);
     };
 
     const onUserSelect = (event) => {
