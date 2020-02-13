@@ -33,15 +33,17 @@ export default function EnhancedTableToolbar(props) {
         return actionsForSelected ? actionsForSelected() : '';
     };
 
+    const selectedCount = numSelected || 0;
+
     return (
         <Toolbar
             className={clsx(classes.root, {
-                [classes.highlight]: numSelected > 0,
+                [classes.highlight]: selectedCount > 0,
             })}
         >
-            {numSelected > 0 ? (
+            {(selectedCount || 0) > 0 ? (
                 <Typography className={classes.title} color="inherit" variant="subtitle1">
-                    {numSelected} selected
+                    {selectedCount} selected
                 </Typography>
             ) : ''}
 
@@ -51,6 +53,6 @@ export default function EnhancedTableToolbar(props) {
 };
 
 EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
+    numSelected: PropTypes.number,
     actionsForSelected: PropTypes.func
 };

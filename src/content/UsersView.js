@@ -7,6 +7,7 @@ import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import TextField from "@material-ui/core/TextField";
 import BlockUi from "react-block-ui";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 const useStyles = makeStyles(theme => ({
     userDataGrid: {
@@ -191,6 +192,7 @@ export default function UsersView() {
 
     return (
         <div>
+            <CssBaseline/>
             <BlockUi tag='div' blocking={loadingUsers || loadingRoles}>
                 <Select id='user-select' value={getSelectedUserId()}
                         onChange={onUserSelect} variant="outlined" className={classes.select}

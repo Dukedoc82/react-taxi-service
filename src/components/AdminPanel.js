@@ -6,8 +6,8 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import PropTypes from "prop-types";
-import DriverSelect from "./DriverSelect";
 import UsersView from "../content/UsersView";
+import AdminOrdersTable from '../content/AdminOrdersTable';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -70,7 +70,7 @@ export default function AdminPanel() {
                 <UsersView/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <DriverSelect/>
+                <AdminOrdersTable selected={[]}/>
             </TabPanel>
         </div>
     );
