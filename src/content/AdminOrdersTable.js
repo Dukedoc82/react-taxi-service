@@ -312,7 +312,6 @@ export default function AdminOrdersTable() {
     const saveChanges = () => {
         setIsLoading(true);
         let body = [];
-        console.log('1111');
         for (let prop in changedOrders) {
             let order = changedOrders[prop];
 
