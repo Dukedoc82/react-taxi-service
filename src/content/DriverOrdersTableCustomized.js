@@ -1,15 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { lighten, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import {makeGetCall, makePutCall} from "../utils/ajaxRequest";
@@ -25,118 +22,13 @@ import RefreshButton from "../components/buttons/RefreshButton";
 import OrderDetails from "./OrderDetails";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import EnhancedTableHead from "../components/table/EnhancedTableHead";
+import BlockUi from "react-block-ui";
+import EnhancedTableToolbar from "../components/table/EnhancedTableToolbar";
+import {getSorting, stableSort} from "../utils/SortingUtils";
 
 function createData(id, addressFrom, addressTo, appointmentTime, client, status) {
     return { id, addressFrom, addressTo, appointmentTime, client, status };
 }
-
-function desc(a, b, orderBy) {
-    if (orderBy === 'appointmentTime') {
-        let aDate = new Date(a[orderBy]);
-        let bDate = new Date(b[orderBy]);
-        if (bDate < aDate) {
-            return -1;
-        }
-        if (bDate > aDate) {
-            return 1;
-        }
-        return 0;
-    } else {
-        if (b[orderBy] < a[orderBy]) {
-            return -1;
-        }
-        if (b[orderBy] > a[orderBy]) {
-            return 1;
-        }
-        return 0;
-    }
-}
-
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
-
-const useToolbarStyles = makeStyles(theme => ({
-    root: {
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(1)
-    },
-    highlight:
-        theme.palette.type === 'light'
-            ? {
-                color: theme.palette.secondary.main,
-                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-            }
-            : {
-                color: theme.palette.text.primary,
-                backgroundColor: theme.palette.secondary.dark,
-            },
-    title: {
-        flex: '1 1 100%',
-    },
-    tableHeader: {
-        'font-weight': 'bold',
-        'border-bottom': 'none'
-    },
-    statusCell: {
-        width: '15%',
-        display: 'flex',
-        'flex-direction': 'row',
-        'justify-content': 'center'
-    },
-    statusDiv: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0px 1px',
-        ...theme.mixins.toolbar,
-        justifyContent: 'center',
-        'min-height': '0px !important'
-    }
-}));
-
-const EnhancedTableToolbar = props => {
-    const classes = useToolbarStyles();
-    const { numSelected, refreshOrders, selected, refuseOrders, assignOrders, completeOrders, forStatus } = props;
-
-    return (
-        <Toolbar
-            className={clsx(classes.root, {
-                [classes.highlight]: numSelected > 0,
-            })}
-        >
-            {numSelected > 0 ? (
-                <Typography className={classes.title} color="inherit" variant="subtitle1">
-                    {numSelected} selected
-                </Typography>
-            ) : ''}
-
-            {numSelected > 0 ? (
-                forStatus === 'assigned' ? (<div className={classes.statusDiv}>
-                    <RefuseButton tooltip='Refuse selected' onClick={(e) => refuseOrders(e, selected)}/>
-                    <CompleteButton tooltip='Complete selected' onClick={(e) => completeOrders(e, selected)}/>
-                    </div>) : (forStatus === 'opened' ?
-                        (<AssignButton onClick={(e) => assignOrders(e, selected)} tooltip='Assign selected'/>
-                        ): '')
-            ) : (
-                <RefreshButton tooltip='Refresh' onClick={refreshOrders}/>
-            )}
-        </Toolbar>
-    );
-};
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-};
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -147,7 +39,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(2),
     },
     table: {
-        minWidth: 750,
+        minWidth: 0,
     },
     visuallyHidden: {
         border: 0,
@@ -212,6 +104,8 @@ export default function DriverOrdersTableCustomized(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [dataRows, setDataRows] = React.useState(props.orders);
     const [displayOrderDetailsId, setDisplayOrderDetailsId] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const [updateReqSent, setUpdateReqSent] = React.useState(false);
     const getOrdersUrl = statuses === 'opened' ?
         '/driver/openedOrders' : statuses === 'assigned' ?
             '/driver/assignedOrders' : statuses ==='closed' ? '/driver/completedOrders' : 'null';
@@ -247,7 +141,6 @@ export default function DriverOrdersTableCustomized(props) {
 
     const onOpenedOrdersLoaded = (response) => {
         const rows = response.map((row) => {
-
             return createData(row.order.id, row.order.addressFrom, row.order.addressTo, row.order.appointmentDate,
                 getUserFullName(row.order.client));
         });
@@ -256,6 +149,7 @@ export default function DriverOrdersTableCustomized(props) {
             changeOrdersHandler(rows, performedAction);
         }
         setSelected([]);
+        setLoading(false);
         setPerformedAction('');
     };
 
@@ -328,15 +222,10 @@ export default function DriverOrdersTableCustomized(props) {
         }
     };
 
-    const getEmptyRows = (rows) => {
-        return rows ?
-            rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage) :
-            0;
-    };
-
     const assignOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('assign');
         let ajax = {
             url: '/driver/assignOrderToMe/' + orderId,
@@ -348,6 +237,7 @@ export default function DriverOrdersTableCustomized(props) {
     const refuseOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('refuse');
         let ajax = {
             url: '/driver/refuseOrders',
@@ -360,6 +250,7 @@ export default function DriverOrdersTableCustomized(props) {
     const assignOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('assign');
         let ajax = {
             url: '/driver/assignOrders',
@@ -372,6 +263,7 @@ export default function DriverOrdersTableCustomized(props) {
     const completeOrders = (event, orderIds) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('assign');
         let ajax = {
             url: '/driver/completeOrders',
@@ -384,6 +276,7 @@ export default function DriverOrdersTableCustomized(props) {
     const refuseOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('refuse');
         let ajax = {
             url: '/driver/refuseOrder/' + orderId,
@@ -395,15 +288,17 @@ export default function DriverOrdersTableCustomized(props) {
     const completeOrder = (event, orderId) => {
         event.preventDefault();
         event.stopPropagation();
+        setLoading(true);
         setPerformedAction('complete');
         let ajax = {
             url: '/driver/completeOrder/' + orderId,
-            onSuccess: refreshOpenedOrders
+            onSuccess: refreshOpenedOrders()
         };
         makePutCall(ajax);
     };
 
     const refreshOpenedOrders = () => {
+        setLoading(true);
         let ajax = {
             url: getOrdersUrl,
             onSuccess: onOpenedOrdersLoaded
@@ -420,9 +315,36 @@ export default function DriverOrdersTableCustomized(props) {
         </TableCell>) : null;
     };
 
+    const getCheckboxAllCell = (numSelected, rowCount, onSelectAllClick) => {
+        return statuses !== 'closed' ? (<TableCell padding="checkbox">
+            <Checkbox
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={numSelected === rowCount && rowCount > 0}
+                onChange={onSelectAllClick}
+                inputProps={{ 'aria-label': 'select all desserts' }}
+            />
+        </TableCell>) : null;
+    };
+
+    const getAvailableActionsOnSelected = () => {
+        return selected.length > 0 ? (
+            statuses === 'assigned' ? (<div className={classes.statusDiv}>
+                <RefuseButton tooltip='Refuse selected' onClick={(e) => refuseOrders(e, selected)}/>
+                <CompleteButton tooltip='Complete selected' onClick={(e) => completeOrders(e, selected)}/>
+            </div>) : (statuses === 'opened' ?
+                (<AssignButton onClick={(e) => assignOrders(e, selected)} tooltip='Assign selected'/>
+                ): '')
+        ) : (
+            <RefreshButton tooltip='Refresh' onClick={refreshOpenedOrders}/>
+        );
+    };
+
+
     let performedAction = '';
 
-    if (dataRows == null) {
+    if (dataRows == null && !updateReqSent) {
+        setUpdateReqSent(true);
+        setLoading(true);
         let ajax = {
             url: getOrdersUrl,
             onSuccess: onOpenedOrdersLoaded
@@ -433,15 +355,14 @@ export default function DriverOrdersTableCustomized(props) {
     return (
         <div className={classes.root}>
             <CssBaseline/>
+            <BlockUi tag='div' blocking={loading}>
             {dataRows === null ?
 
                 <div className={classes.drawerHeader}><CircularProgress/></div> :
                 <Paper className={classes.paper}>
                     {getOrderDetailsDialog()}
-                    <EnhancedTableToolbar numSelected={selected.length} refreshOrders={refreshOpenedOrders}
-                                          selected={selected}
-                                          refuseOrders={refuseOrders} forStatus={statuses} assignOrders={assignOrders}
-                                          completeOrders={completeOrders}/>
+                    <EnhancedTableToolbar numSelected={selected.length}
+                                          selected={selected} actionsForSelected={getAvailableActionsOnSelected}/>
                     <TableContainer>
                         <Table
                             className={classes.table}
@@ -452,13 +373,10 @@ export default function DriverOrdersTableCustomized(props) {
                             <EnhancedTableHead
                                 headCells={headCells}
                                 classes={classes}
-                                numSelected={selected.length}
                                 order={order}
                                 orderBy={orderBy}
-                                onSelectAllClick={handleSelectAllClick}
                                 onRequestSort={handleRequestSort}
-                                rowCount={dataRows ? dataRows.length : 0}
-                                forStatus={statuses}
+                                checkBoxAllCell={getCheckboxAllCell(selected.length, dataRows ? dataRows.length : 0, handleSelectAllClick)}
                             />
                             <TableBody>
                                 {stableSort(dataRows || [], getSorting(order, orderBy))
@@ -491,11 +409,6 @@ export default function DriverOrdersTableCustomized(props) {
                                             </TableRow>
                                         );
                                     })}
-                                {getEmptyRows(dataRows) > 0 && (
-                                    <TableRow style={{height: (33) * getEmptyRows(dataRows)}}>
-                                        <TableCell colSpan={6}/>
-                                    </TableRow>
-                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -511,6 +424,7 @@ export default function DriverOrdersTableCustomized(props) {
                 </Paper>
 
             }
+            </BlockUi>
         </div>
     );
 };
