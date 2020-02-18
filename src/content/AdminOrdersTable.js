@@ -110,11 +110,11 @@ const useStyles = makeStyles(theme => ({
 
 const headCells = [
     { id: 'addressFrom', numeric: false, disablePadding: false, label: 'Address From', sortable: true},
-    { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
+    { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To', sortable: true },
     { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time', sortable: true },
-    { id: 'client', numeric: false, disablePadding: false, label: 'Client', align: 'center' },
+    { id: 'client', numeric: false, disablePadding: false, label: 'Client', align: 'center', sortable: true },
     { id: 'status', numeric: false, disablePadding: false, label: 'Status', align: 'center', sortable: true },
-    { id: 'driver', numeric: false, disablePadding: false, label: 'Driver', align: 'center' }
+    { id: 'driver', numeric: false, disablePadding: false, label: 'Driver', align: 'center', sortable: true }
 ];
 
 export default function AdminOrdersTable() {
@@ -382,6 +382,14 @@ export default function AdminOrdersTable() {
                         size={'medium'}
                         aria-label="enhanced table"
                     >
+                        <colgroup>
+                            <col width='20%'/>
+                            <col width='20%'/>
+                            <col width='18%'/>
+                            <col width='15%'/>
+                            <col width='12%'/>
+                            <col width='15%'/>
+                        </colgroup>
                         <EnhancedTableHead
                             headCells={headCells}
                             classes={classes}

@@ -90,8 +90,8 @@ export default function SignUp() {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        setBlocking(true);
         if (validateForm()) {
+            setBlocking(true);
             let ajax = {
                 url: window.location.search === '?driver' ?
                     '/registerAsADriver' :

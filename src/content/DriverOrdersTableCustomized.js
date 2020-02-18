@@ -117,9 +117,9 @@ export default function DriverOrdersTableCustomized(props) {
         { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' }
     ]: [
         { id: 'addressFrom', numeric: false, disablePadding: true, label: 'Address From', sortable: true},
-        { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To' },
+        { id: 'addressTo', numeric: false, disablePadding: false, label: 'Address To', sortable: true },
         { id: 'appointmentTime', numeric: true, disablePadding: false, label: 'Appointment Time', sortable: true },
-        { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center' },
+        { id: 'client', numeric: true, disablePadding: false, label: 'Client', align: 'center', sortable: true },
         { id: 'actions', numeric: false, disablePadding: true, label: 'Actions', align: 'center'}
     ];
 
