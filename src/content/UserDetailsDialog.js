@@ -14,8 +14,6 @@ import {makeStyles} from "@material-ui/core";
 import {green} from "@material-ui/core/colors";
 import {makeGetCall, makePostCall} from "../utils/ajaxRequest";
 import {validateIsNotEmpty} from "../utils/ValidationUtils";
-import ReactDOM from "react-dom";
-import AccountActivation from "../login/AccountActivation";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -71,6 +69,7 @@ export default function UserDetailsDialog() {
     const [userNameErrorMessage, setUserNameErrorMessage] = useState('');
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] = useState('');
+    const [dataChanged, setDataChanged] = useState(false);
 
     const [successMessageOpen, setSuccessMessageOpen] = useState(false);
     const [alertDialogTitle, setAlertDialogTitle] = useState('Success');
@@ -80,8 +79,10 @@ export default function UserDetailsDialog() {
     const [isUpdated, setIsUpdated] = useState(false);
 
     const [blocking, setBlocking] = useState(false);
+
     const onSubmit = (event) => {
         event.preventDefault();
+        setBlocking(true);
         let body = {
             firstName: firstName,
             lastName: lastName,
@@ -94,7 +95,16 @@ export default function UserDetailsDialog() {
             body: body,
             url: '/profile/update',
             onSuccess: function(response) {
-                console.log(response);
+                setBlocking(false);
+                setAlertDialogTitle('Success');
+                setAlertDialogMessage('Profile successfully updated.');
+                setSuccessMessageOpen(true);
+
+                let userData = JSON.parse(localStorage.getItem('userData'));
+                userData.firstName = response.firstName;
+                userData.lastName = response.lastName;
+                localStorage.setItem('userData', JSON.stringify(userData));
+
             }
         };
         if (validateForm()) {
@@ -124,24 +134,28 @@ export default function UserDetailsDialog() {
     const onUsernameChange = (event) => {
         event.preventDefault();
         setUsername(event.target.value);
+        setDataChanged(true);
         setUserNameErrorMessage(!!event.target.value ? '' : userNameErrorMessage);
     };
 
     const onFirstNameChange = (event) => {
         event.preventDefault();
         setFirstName(event.target.value);
+        setDataChanged(true);
         setFirstNameErrorMessage(!!event.target.value ? '' : firstNameErrorMessage);
     };
 
     const onLastNameChange = (event) => {
         event.preventDefault();
         setLastName(event.target.value);
+        setDataChanged(true);
         setLastNameErrorMessage(!!event.target.value ? '' : lastNameErrorMessage);
     };
 
     const onPasswordChange = (event) => {
         event.preventDefault();
         setPassword(event.target.value);
+        setDataChanged(true);
         setPasswordErrorMessage(!!event.target.value ? '' : passwordErrorMessage);
     };
 
@@ -150,6 +164,7 @@ export default function UserDetailsDialog() {
             ? value.replace('8', '+7')
             : value;
         setPhoneNumber(phoneNum);
+        setDataChanged(true);
         setPhoneNumberErrorMessage(!!value ? '' : phoneNumberErrorMessage);
     };
 
@@ -208,9 +223,6 @@ export default function UserDetailsDialog() {
         }
 
         setSuccessMessageOpen(false);
-        if (alertDialogTitle === 'Success')
-        //goToLoginPage();
-            ReactDOM.render(<AccountActivation text={"You're successfully registered. To activate your account go to your inbox and follow the instructions which we sent you a moment ago."}/>, document.getElementById('root'));
     };
 
     const validatePhoneNumber = (value) => {
@@ -346,6 +358,7 @@ export default function UserDetailsDialog() {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            disabled={!dataChanged}
                         >
                             Update
                         </Button>
