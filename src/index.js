@@ -21,6 +21,20 @@ if (window.location.pathname.indexOf("/confirm/") !== -1) {
         onError: onError
     };
     makeGetCall(ajax);
+} else if (window.location.pathname.indexOf("/generateNewPassword/") !== -1) {
+    let onSuccess = function() {
+        ReactDOM.render(<AccountActivation text="Password successfully generated. The instructions are sent to you e-mail." showLink={false}/>, docRoot);
+    };
+    let onError = function(response) {
+        ReactDOM.render(<AccountActivation text={response.message}/>, docRoot);
+    };
+    let ajax = {
+        url: window.location.pathname,
+        onSuccess: onSuccess,
+        onError: onError
+    };
+    makeGetCall(ajax);
+
 } else if (window.location.search === '?driver')
     ReactDOM.render(<SignUp/>, docRoot);
 else if (localStorage.getItem("userToken")) {
