@@ -13,6 +13,7 @@ import ReactDOM from 'react-dom';
 import SignUp from './SignUp';
 import {makePostCall} from "../utils/ajaxRequest";
 import AppPage from "../content/AppPage";
+import ForgetPasswordForm from "./ForgetPasswordForm";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -106,6 +107,11 @@ export default function SignIn() {
         validate() && makePostCall(ajax);
     };
 
+    const openForgetPasswordForm = (event) => {
+        event.preventDefault();
+        ReactDOM.render(<ForgetPasswordForm/>, document.getElementById('root'));
+    };
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -158,6 +164,10 @@ export default function SignIn() {
                     </Button>
                     <Grid container>
                         <Grid item xs>
+                            <Link href="#" variant="body2" onClick={(e) => openForgetPasswordForm(e)}>
+                                Forget password?
+                            </Link>
+
                         </Grid>
                         <Grid item>
                             <Link href="#" variant="body2" onClick={openSignUp}>

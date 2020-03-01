@@ -20,6 +20,8 @@ import {byClasses, getUserFullName} from "../utils/DataUtils";
 import AdminPanel from "../components/AdminPanel";
 import styles from '../utils/classes'
 import SettingsPage from "../content/SettingsPage";
+import Tooltip from "@material-ui/core/Tooltip";
+import UserDetailsDialog from "../content/UserDetailsDialog";
 
 export const SwipeableSidebar = forwardRef((props, ref) => {
     const {setApplicationBarTitle} = props;
@@ -89,6 +91,8 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
                 return <AdminPanel/>;
             case 'mailSettings':
                 return <SettingsPage/>;
+            case 'userSettings':
+                return <UserDetailsDialog/>;
             default:
                 return <OrdersTable/>;
         }
@@ -142,9 +146,11 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
             onKeyDown={toggleDrawer(side, false)}
         >
             <div className={drawerHeader}>
+                <Tooltip title="Edit Profile" onClick={() => setView({id: 'userSettings'})}>
                 <Icon path={mdiAccountCardDetails}
                       size={3}
                       color={green[600]}/>
+                </Tooltip>
             </div>
             <div className={byClasses([drawerHeader, userNameDiv])}>
                 <Typography className={userNameTypography}>
