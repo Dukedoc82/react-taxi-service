@@ -10,6 +10,8 @@
 
 /.idea
 
+react-taxi-service.iml
+
 # production
 /build
 
