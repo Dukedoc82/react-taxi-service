@@ -39,13 +39,6 @@ function desc(a, b, orderBy) {
 }
 
 function userComparison(a, b, orderBy) {
-    console.log({
-        userComparison: {
-            a: a[orderBy],
-            b: b[orderBy],
-            orderBy: orderBy
-        }
-    });
     let aUserName = getUserName(a[orderBy]);
     let bUserName = getUserName(b[orderBy]);
     if (bUserName === null && aUserName === null)
@@ -64,13 +57,6 @@ function userComparison(a, b, orderBy) {
 }
 
 function statusComparison(a, b, orderBy) {
-    console.log({
-        statusComparison: {
-            a: a[orderBy],
-            b: b[orderBy],
-            orderBy: orderBy
-        }
-    });
     let aStatus = a[orderBy].id;
     let bStatus = b[orderBy].id;
     if (bStatus < aStatus) {
@@ -83,13 +69,6 @@ function statusComparison(a, b, orderBy) {
 }
 
 function simpleComparison(a, b, orderBy) {
-    console.log({
-        simpleComparison: {
-            a: a[orderBy],
-            b: b[orderBy],
-            orderBy: orderBy
-        }
-    });
     if (b[orderBy] < a[orderBy]) {
         return -1;
     }

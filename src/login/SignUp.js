@@ -88,6 +88,18 @@ export default function SignUp() {
             ReactDOM.render(<SignIn/>, document.getElementById('root'));
     };
 
+    const getGoToSignInBlock = () => {
+        return window.location.search === '?driver' ? '' : (
+            <Grid container justify="flex-end">
+                <Grid item>
+                    <Link href="#" variant="body2" onClick={event => goToLoginPage(event)}>
+                        Already have an account? Sign in
+                    </Link>
+                </Grid>
+            </Grid>
+        );
+    };
+
     const onSubmit = (event) => {
         event.preventDefault();
         if (validateForm()) {
@@ -352,13 +364,8 @@ export default function SignUp() {
                     <AlertDialog open={successMessageOpen} message={alertDialogMessage}
                                  handleClose={handleSnackBarClose} title={alertDialogTitle}/>
 
-                    <Grid container justify="flex-end">
-                        <Grid item>
-                            <Link href="#" variant="body2" onClick={event => goToLoginPage(event)}>
-                                Already have an account? Sign in
-                            </Link>
-                        </Grid>
-                    </Grid>
+                    {getGoToSignInBlock()}
+
                 </form>
             </div>
             </BlockUi>

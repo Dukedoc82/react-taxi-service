@@ -5,12 +5,13 @@ export default function AccountActivation(props) {
     const {text, showLink} = props;
 
     const getLinkBlock = () => {
+        let appUrl = window.location.origin;
         return showLink ? (
             <div style={{
                 alignItems: 'center',
                 textAlign: 'center'
             }}>
-                <a href="http://localhost:3000">Go to the application</a>
+                <a href={appUrl}>Go to the application</a>
             </div>
         ) : '';
     };

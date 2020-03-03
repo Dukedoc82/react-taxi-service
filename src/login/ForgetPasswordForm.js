@@ -43,7 +43,7 @@ export default function ForgetPasswordForm() {
                 ReactDOM.render(<AccountActivation text="The instructions to restore your password are sent to you e-mail." showLink={false}/>, docRoot);
             },
             onError: function(response) {
-                console.log(response);
+                alert(response.message);
             }
         };
         makePostCall(ajax);

@@ -121,7 +121,6 @@ export default function UserDetailsDialog() {
                 setFirstName(response.firstName);
                 setLastName(response.lastName);
                 setPhoneNumber(response.phoneNumber);
-                console.log(response);
                 setBlocking(false);
             },
             onError:function() {

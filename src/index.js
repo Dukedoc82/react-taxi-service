@@ -21,15 +21,15 @@ if (window.location.search.indexOf("?confirm=") !== -1) {
         onError: onError
     };
     makeGetCall(ajax);
-} else if (window.location.pathname.indexOf("/generateNewPassword/") !== -1) {
+} else if (window.location.search.indexOf("?generateNewPassword=") !== -1) {
     let onSuccess = function() {
-        ReactDOM.render(<AccountActivation text="Password successfully generated. The instructions are sent to you e-mail." showLink={false}/>, docRoot);
+        ReactDOM.render(<AccountActivation text="Password successfully generated. The instructions are sent to you e-mail." showLink={true}/>, docRoot);
     };
     let onError = function(response) {
         ReactDOM.render(<AccountActivation text={response.message}/>, docRoot);
     };
     let ajax = {
-        url: window.location.pathname,
+        url: "/generateNewPassword/" + window.location.search.split('=')[1],
         onSuccess: onSuccess,
         onError: onError
     };
