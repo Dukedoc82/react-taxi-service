@@ -6,6 +6,10 @@ const appStyles = makeStyles(theme => ({
     assignFab: {
         backgroundColor: amber[600],
     },
+    completeFab: {
+        backgroundColor: green[600],
+
+    },
     cancelFab: {
         backgroundColor: red[600],
     },
