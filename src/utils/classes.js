@@ -1,10 +1,10 @@
 import React from 'react';
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import {blue, green, lightBlue, red} from "@material-ui/core/colors";
+import {amber, blue, green, lightBlue, red} from "@material-ui/core/colors";
 
 const appStyles = makeStyles(theme => ({
     assignFab: {
-        backgroundColor: green[600],
+        backgroundColor: amber[600],
     },
     cancelFab: {
         backgroundColor: red[600],

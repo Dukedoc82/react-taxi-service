@@ -84,12 +84,14 @@ export default function CreateOrderDialog(props) {
 
     const [addressFrom, setAddressFrom] = useState('');
     const [addressTo, setAddressTo] = useState('');
+    const [selectedDateTime, setSelectedDateTime] = useState(new Date(2020, 2, 8));
     const [selectedTime, setSelectedTime] =
         useState(new Date(2020, 2, 8, currentTime.getHours(), currentTime.getMinutes()));
     const [addressFromError, setAddressFromError] = useState('');
     const [addressToError, setAddressToError] = useState('');
     const [confirmDialogMessage, setConfirmDialogMessage] = useState('');
     const [blocking, setBlocking] = useState(false);
+    const [timeError, setTimeError] = useState('Invalid Time');
 
     const onAddressFromChange = (event) => {
         event.preventDefault();
@@ -130,14 +132,18 @@ export default function CreateOrderDialog(props) {
 
     const onSubmit = (event) => {
         event.preventDefault();
+
         setBlocking(true);
         if (validateForm()) {
+            let appointmentDateTime = new Date(selectedDateTime);
+            appointmentDateTime.setHours(selectedTime.getHours());
+            appointmentDateTime.setMinutes(selectedTime.getMinutes());
             let ajax = {
                 url: '/order/new',
                 body: {
                     addressFrom: addressFrom,
                     addressTo: addressTo,
-                    appointmentDate: selectedTime.toISOString()
+                    appointmentDate: appointmentDateTime.toISOString()
                 },
                 onSuccess: onSuccessCreate,
                 onError: onCreateError
@@ -157,7 +163,38 @@ export default function CreateOrderDialog(props) {
     const validateForm = () => {
         let addrFromIsNotEmpty = validateIsNotEmpty(addressFrom, onCorrectAddressFrom, onInvalidAddressFrom);
         let addrToIsNotEmpty = validateIsNotEmpty(addressTo, onCorrectAddressTo, onInvalidAddressTo);
-        return addrFromIsNotEmpty && addrToIsNotEmpty;
+        return addrFromIsNotEmpty && addrToIsNotEmpty && selectedTime !== null;
+    };
+
+    const updateTime = (v, e) => {
+        if (e !== null) {
+            if (v == 'Invalid Date') {
+                let newTime = new Date(selectedTime);
+                let timeSplit = e.split(":");
+                if (timeSplit[0] > 23 || timeSplit[1] > 59) {
+                    selectedTime.setSeconds(selectedTime.getSeconds() == 59 ? selectedTime.getSeconds() + 1 : selectedTime.getSeconds() - 1);
+                    setSelectedTime(newTime);
+                }
+            } else {
+                let newTime = new Date(selectedDateTime);
+                let timeSplit = e.split(":");
+                if (timeSplit[0] <= 23 && timeSplit[0] >= 0 && timeSplit[1] <=59 && timeSplit[1] >= 0) {
+                    newTime.setHours(timeSplit[0]);
+                    newTime.setMinutes(timeSplit[1]);
+                    setSelectedTime(newTime);
+                } else {
+                    let newTime = new Date(selectedTime);
+                    selectedTime.setSeconds(selectedTime.getSeconds() == 59 ? selectedTime.getSeconds() + 1 : selectedTime.getSeconds() - 1);
+                    setSelectedTime(newTime);
+                }
+            }
+        } else {
+            let newTime = new Date(selectedTime);
+            selectedTime.setMinutes(selectedTime.getMinutes() + 1);
+            setSelectedTime(newTime);
+        }
+        console.log(v);
+        console.log(e);
     };
 
     const onEscape = () => {
@@ -221,8 +258,7 @@ export default function CreateOrderDialog(props) {
                                                 margin="normal"
                                                 id="date-picker-inline"
                                                 label="Appointment date"
-                                                onChange={setSelectedTime}
-                                                value={selectedTime}
+                                                value={selectedDateTime}
                                                 KeyboardButtonProps={{
                                                     'aria-label': 'change date',
                                                 }}
@@ -235,7 +271,9 @@ export default function CreateOrderDialog(props) {
                                                 label="Appointment Time"
                                                 ampm={false}
                                                 value={selectedTime}
-                                                onChange={setSelectedTime}
+                                                invalidDateMessage={"Hello bitch"}
+                                                invalidLabel={'aaa'}
+                                                onChange={updateTime}
                                                 KeyboardButtonProps={{
                                                     'aria-label': 'change time',
                                                 }}
