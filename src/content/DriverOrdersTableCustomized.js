@@ -298,12 +298,16 @@ export default function DriverOrdersTableCustomized(props) {
     };
 
     const refreshOpenedOrders = () => {
+        console.log(1);
         setLoading(true);
         let ajax = {
             url: getOrdersUrl,
             onSuccess: onOpenedOrdersLoaded
         };
-        makeGetCall(ajax);
+        setTimeout(function() {
+            makeGetCall(ajax);
+        }, 300);
+
     };
 
     const getCheckboxCell = (classes, isItemSelected, labelId) => {
