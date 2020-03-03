@@ -109,6 +109,8 @@ export default function UserDetailsDialog() {
         };
         if (validateForm()) {
             makePostCall(ajax);
+        } else {
+            setBlocking(false);
         }
     };
 
