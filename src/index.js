@@ -8,7 +8,7 @@ import AccountActivation from "./login/AccountActivation";
 
 const docRoot = document.getElementById('root');
 localStorage.removeItem('serverUnavailable');
-if (window.location.pathname.indexOf("/confirm/") !== -1) {
+if (window.location.search.indexOf("?confirm=") !== -1) {
     let onSuccess = function() {
         ReactDOM.render(<AccountActivation text="Account successfully activated." showLink={true}/>, docRoot);
     };
@@ -16,7 +16,7 @@ if (window.location.pathname.indexOf("/confirm/") !== -1) {
         ReactDOM.render(<AccountActivation text={response.message}/>, docRoot);
     };
     let ajax = {
-        url: window.location.pathname,
+        url: "/confirm/" + window.location.search.split('=')[1],
         onSuccess: onSuccess,
         onError: onError
     };
