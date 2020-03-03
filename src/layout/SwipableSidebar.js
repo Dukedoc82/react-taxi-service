@@ -102,13 +102,14 @@ export const SwipeableSidebar = forwardRef((props, ref) => {
 
     const onRolesLoaded = (response) => {
         if (response.driver) {
-            menuTitles.push(driverDashboardMenuItem);
+            menuTitles[0] = driverDashboardMenuItem;
         }
         if (response.admin) {
             menuTitles.push(adminDashboardMenuITem);
             menuTitles.push(driverDashboardMenuItem);
         }
         setApplicationBarTitle(menuTitles[0].text);
+        setCurrentView(menuTitles[0]);
     };
 
     useEffect(() => {
