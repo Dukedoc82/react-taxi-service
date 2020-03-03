@@ -38,12 +38,16 @@ class CreateOrder extends React.Component {
 
     createOrder = (event) => {
         event.preventDefault();
-        let body = {
-            addressFrom: this.state.addressFrom,
-            addressTo: this.state.addressTo,
-            appointmentDate: getStrDateFromTime(this.state.appointmentHour, this.state.appointmentMinute)
+        let ajax = {
+            url: '/order/new',
+            body: {
+                addressFrom: this.state.addressFrom,
+                addressTo: this.state.addressTo,
+                appointmentDate: getStrDateFromTime(this.state.appointmentHour, this.state.appointmentMinute)
+            },
+            onSuccess: this.successCreate
         };
-        makePostCall("/order/new", body, this.successCreate)
+        makePostCall(ajax);
     };
 
     render() {

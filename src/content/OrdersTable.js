@@ -111,8 +111,33 @@ export default function SimpleTable() {
         }
     };
 
+    const getOrdersDataRows = () => {
+        return dataRows !== null && dataRows.length > 0 ? dataRows.map(row => (
+            <TableRow key={row.order.id}>
+                <TableCell component="th" scope="row">
+                    {row.order.addressFrom}
+                </TableCell>
+                <TableCell>{row.order.addressTo}</TableCell>
+                <TableCell align="right">{getFormattedDateTimeFromISOString(row.order.appointmentDate)}</TableCell>
+                <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
+                <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
+                <TableCell align="center">{getActionView(row)}</TableCell>
+            </TableRow>
+        )) : (
+            <TableRow key={'no.order.data'}>
+                <TableCell component='th' scope='row' colSpan={6} align='center'>
+                    It seems you haven't created any order yet. Use 'Create Order Button' to create a new taxi request.
+                </TableCell>
+            </TableRow>
+        );
+    };
+
     const onCancelSuccess = () => {
-        makeGetCall("/order/", onDataLoaded);
+        let ajax = {
+            url: '/order/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
     };
 
     const onCancelError = (response) => {
@@ -120,7 +145,13 @@ export default function SimpleTable() {
     };
 
     const cancelOrder = (event, orderId) => {
-        makePutCall("/order/cancel/" + orderId, null, onCancelSuccess, onCancelError);
+        event.preventDefault();
+        let ajax = {
+            url: '/order/cancel/' + orderId,
+            onSuccess: onCancelSuccess,
+            onError: onCancelError
+        };
+        makePutCall(ajax);
     };
 
     const onDataLoaded = (response) => {
@@ -169,11 +200,21 @@ export default function SimpleTable() {
 
     const onOrderCreate = () => {
         setStateStatus('display');
-        makeGetCall('/order/', onDataLoaded);
+        let ajax = {
+            url: '/order/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
+        makeGetCall(ajax);
     };
 
-    if (dataRows === null)
-        makeGetCall("/order/", onDataLoaded);
+    if (dataRows === null) {
+        let ajax = {
+            url: '/order/',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
+    }
 
     return (
         <div>
@@ -200,18 +241,7 @@ export default function SimpleTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {dataRows.map(row => (
-                                <TableRow key={row.order.id}>
-                                    <TableCell component="th" scope="row">
-                                        {row.order.addressFrom}
-                                    </TableCell>
-                                    <TableCell>{row.order.addressTo}</TableCell>
-                                    <TableCell align="right">{getFormattedDateTimeFromISOString(row.order.appointmentDate)}</TableCell>
-                                    <TableCell align="center">{getUserFullName(row.driver)}</TableCell>
-                                    <TableCell align="center">{getStatusCaption(row.status.titleKey)}</TableCell>
-                                    <TableCell align="center">{getActionView(row)}</TableCell>
-                                </TableRow>
-                            ))}
+                            {getOrdersDataRows()}
                         </TableBody>
                     </Table>
                     {getNewOrderDialog()}

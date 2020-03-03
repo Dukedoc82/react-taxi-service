@@ -132,12 +132,17 @@ export default function CreateOrderDialog(props) {
         event.preventDefault();
         setBlocking(true);
         if (validateForm()) {
-            let body = {
-                addressFrom: addressFrom,
-                addressTo: addressTo,
-                appointmentDate: selectedTime.toISOString()
+            let ajax = {
+                url: '/order/new',
+                body: {
+                    addressFrom: addressFrom,
+                    addressTo: addressTo,
+                    appointmentDate: selectedTime.toISOString()
+                },
+                onSuccess: onSuccessCreate,
+                onError: onCreateError
             };
-            makePostCall("/order/new", body, onSuccessCreate, onCreateError);
+            makePostCall(ajax);
         }
     };
 

@@ -13,6 +13,7 @@ import ReactDOM from 'react-dom';
 import SignUp from './SignUp';
 import {makePostCall} from "../utils/ajaxRequest";
 import AppPage from "../content/AppPage";
+import ForgetPasswordForm from "./ForgetPasswordForm";
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -61,6 +62,7 @@ export default function SignIn() {
 
     const onSuccessAuth = (response) => {
         localStorage.setItem('userData', JSON.stringify(response));
+        console.log(JSON.stringify(response));
         ReactDOM.render(<AppPage/>, document.getElementById('root'));
     };
 
@@ -92,11 +94,23 @@ export default function SignIn() {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        let body = {
-            username: username,
-            password: password
+        let ajax = {
+            url: '/authenticate',
+            body: {
+                username: username,
+                password: password
+            },
+            onSuccess: onSuccessAuth,
+            onError: onError,
+            onAuthError: onAuthError,
+            onDisabledError: onDisabledError
         };
-        validate() && makePostCall('/authenticate', body, onSuccessAuth, onError, onAuthError, onDisabledError);
+        validate() && makePostCall(ajax);
+    };
+
+    const openForgetPasswordForm = (event) => {
+        event.preventDefault();
+        ReactDOM.render(<ForgetPasswordForm/>, document.getElementById('root'));
     };
 
     return (
@@ -151,6 +165,10 @@ export default function SignIn() {
                     </Button>
                     <Grid container>
                         <Grid item xs>
+                            <Link href="#" variant="body2" onClick={(e) => openForgetPasswordForm(e)}>
+                                Forget password?
+                            </Link>
+
                         </Grid>
                         <Grid item>
                             <Link href="#" variant="body2" onClick={openSignUp}>

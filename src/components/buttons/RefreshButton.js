@@ -1,4 +1,3 @@
-import ClearOutlined from '@material-ui/icons/ClearOutlined';
 import React from "react";
 import TooltipButton from "./TooltipButton";
 import {PropTypes} from "prop-types";

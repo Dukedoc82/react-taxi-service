@@ -43,7 +43,11 @@ export default function DriverOrdersTable() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-            makeGetCall("/driver/openedOrders", onDataLoaded);
+        let ajax = {
+            url: '/driver/openedOrders',
+            onSuccess: onDataLoaded
+        };
+        makeGetCall(ajax);
     }, []);
 
     const onDataLoaded = (response) => {

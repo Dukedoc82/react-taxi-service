@@ -59,7 +59,11 @@ export default function OrderDetails(props) {
     };
 
     useEffect(() => {
-        makeGetCall('/order/' + orderId, onDialogLoad);
+        let ajax = {
+            url: '/order/' + orderId,
+            onSuccess: onDialogLoad
+        };
+        makeGetCall(ajax);
     }, []);
 
     return (
