@@ -1,5 +1,5 @@
 export const properties = {
-    backendServer: 'http://localhost:8080'
+    backendServer: 'https://backend.taxi-epam.ru'
 }
 
 export default properties
