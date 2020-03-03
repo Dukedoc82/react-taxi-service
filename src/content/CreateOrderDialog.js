@@ -143,6 +143,8 @@ export default function CreateOrderDialog(props) {
                 onError: onCreateError
             };
             makePostCall(ajax);
+        } else {
+            setBlocking(false);
         }
     };
 
