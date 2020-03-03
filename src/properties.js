@@ -1,5 +1,5 @@
 export const properties = {
-    backendServer: 'http://epruryaw0808:8080'
+    backendServer: 'https://backend.taxi-epam.ru'
     //backendServer: 'http://taxi-epam.ru:8080'
 };
 
