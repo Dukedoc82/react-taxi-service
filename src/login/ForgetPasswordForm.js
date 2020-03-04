@@ -8,6 +8,9 @@ import Button from '@material-ui/core/Button';
 import {makePostCall} from "../utils/ajaxRequest";
 import ReactDOM from "react-dom";
 import AccountActivation from "./AccountActivation";
+import BlockUi from "react-block-ui";
+import Link from "@material-ui/core/Link";
+import SignIn from "./SignIn";
 
 const useStyles = makeStyles(theme => ({
     form: {
@@ -25,6 +28,7 @@ export default function ForgetPasswordForm() {
 
     const [username, setUsername] = useState('');
     const [userNameErrorMsg, setUserNameErrorMsg] = useState('');
+    const [blocking, setBlocking] = useState(false);
 
     const onUserNameChange = (event) => {
         event.preventDefault();
@@ -32,7 +36,18 @@ export default function ForgetPasswordForm() {
         setUsername(event.target.value);
     };
 
+    const goToLoginPage = (event) => {
+        if (event)
+            event.preventDefault();
+        localStorage.removeItem('userToken');
+        if (window.location.search === '?driver')
+            window.location.href = window.location.origin;
+        else
+            ReactDOM.render(<SignIn/>, document.getElementById('root'));
+    };
+
     const onSubmit = (event) => {
+        setBlocking(true);
         event.preventDefault();
         let ajax = {
             body: {
@@ -43,6 +58,7 @@ export default function ForgetPasswordForm() {
                 ReactDOM.render(<AccountActivation text="The instructions to restore your password are sent to you e-mail." showLink={false}/>, docRoot);
             },
             onError: function(response) {
+                setBlocking(false);
                 alert(response.message);
             }
         };
@@ -52,32 +68,47 @@ export default function ForgetPasswordForm() {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <form className={classes.form} noValidate onSubmit={onSubmit}>
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    onChange={onUserNameChange}
-                    value={username}
-                    helperText={userNameErrorMsg}
-                    error={!!userNameErrorMsg}
-                />
-                <Grid container justify="flex-end">
-                    <Button type="submit"
-                            variant="contained"
-                            color="primary"
-                            onClick={onSubmit}
-                            >
-                        Restore password
-                    </Button>
-                </Grid>
-            </form>
+            <BlockUi blocking={blocking}>
+                <form className={classes.form} noValidate onSubmit={onSubmit}>
+                    <Grid container xs={12}>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                onChange={onUserNameChange}
+                                value={username}
+                                helperText={userNameErrorMsg}
+                                error={!!userNameErrorMsg}
+                            />
+                        </Grid>
+
+                        <Grid item xs={5}>
+                            <Link href="#" variant="body2" onClick={event => goToLoginPage(event)}>
+                                Go to sign in form
+                            </Link>
+                        </Grid>
+                        <Grid item xs={7}>
+                            <Grid container justify="flex-end">
+                                <Button type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={onSubmit}
+                                >
+                                    Restore password
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                    </Grid>
+                </form>
+            </BlockUi>
         </Container>
 
     );
