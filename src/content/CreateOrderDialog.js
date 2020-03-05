@@ -84,9 +84,9 @@ export default function CreateOrderDialog(props) {
 
     const [addressFrom, setAddressFrom] = useState('');
     const [addressTo, setAddressTo] = useState('');
-    const [selectedDateTime, setSelectedDateTime] = useState(new Date(2020, 2, 8));
+    const [selectedDateTime, setSelectedDateTime] = useState(new Date(2020, 2, 6));
     const [selectedTime, setSelectedTime] =
-        useState(new Date(2020, 2, 8, currentTime.getHours(), currentTime.getMinutes()));
+        useState(new Date(2020, 2, 6, currentTime.getHours(), currentTime.getMinutes()));
     const [addressFromError, setAddressFromError] = useState('');
     const [addressToError, setAddressToError] = useState('');
     const [confirmDialogMessage, setConfirmDialogMessage] = useState('');
